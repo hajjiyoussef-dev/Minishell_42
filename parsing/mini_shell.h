@@ -20,6 +20,18 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
+
+// for the execution 
+
+typedef struct s_exec_cmd
+{
+	char **argv;
+	char *infile;
+	char *outfile ;
+	int append;  // 1 if >> 0 if >
+	int heredoc; 
+} t_exec_cmd;
+
 typedef enum s_type
 {
 	PIPE,
