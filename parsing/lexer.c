@@ -1,6 +1,6 @@
 #include "mini_shell.h"
 
-t_toke *create_token(char *str, char *type)
+t_toke *create_token(char *str, t_type type, char spc_aftr)
 {
 	t_toke *new_toke;
 
@@ -8,7 +8,11 @@ t_toke *create_token(char *str, char *type)
 	if (!new_toke)
 		return (NULL);
 	new_toke->str = ft_strdup(str);
-	new_toke->type = ft_strdup(type);
+	new_toke->type = type;
+	if (spc_aftr == ' ')
+		new_toke->space_after = 1;
+	else
+		new_toke->space_after = 0;
 	new_toke->next = NULL;
 	return (new_toke);
 }
@@ -39,7 +43,8 @@ char *copy_word(char *line, int *i)
 	start = *i;
 	while (line[*i])
 	{
-		if (line[*i] != ' ' && line[*i] != '>' && line[*i] != '|' && line[*i] != '>' && line[*i] != '<')
+		if (line[*i] != ' ' && line[*i] != '>' && line[*i] != '|' && line[*i] != '\'' 
+			&& line[*i] != '<' && line[*i] != '\"')
 			(*i)++;
 		else
 			break ;
@@ -56,23 +61,45 @@ char *copy_word(char *line, int *i)
 
 char *copy_quoted_word(char *line, int *i)
 {
-    int start;
-    int j = 0;
-    char quote;
-    char *word;
+    char    *result;
+    int     start;
+    char    quote;
 
     quote = line[*i];
     (*i)++;
     start = *i;
     while (line[*i] && line[*i] != quote)
         (*i)++;
-    word = malloc((*i - start) + 1);
-    if (!word)
-        return (NULL);
-    while (start < *i)
-        word[j++] = line[start++];
-    word[j] = '\0';
-    if (line[*i] == quote)
-        (*i)++;
-    return (word);
+    result = ft_substr(line, start, *i - start);
+    // if (line[*i] == quote)
+    //     (*i)++;
+    return (result);
+}
+int	help_concatinate(t_type type)
+{
+	if (type == WORD || type == DB_QT || type == SNL_QT)
+		return (1);
+	return (0);
+}
+t_toke	*concatinate(t_toke *head)
+{
+	t_toke	*tmp;
+	t_toke	*to_free;
+
+	tmp = head;
+	while (tmp && tmp->next)
+	{
+		if (!tmp->space_after && help_concatinate(tmp->type)
+			&& help_concatinate(tmp->next->type))
+		{
+			tmp->str = ft_strjoin(tmp->str, tmp->next->str);
+			to_free = tmp->next;
+			tmp->next = tmp->next->next;
+			free(to_free->str);
+			free(to_free);
+		}
+		else
+			tmp = tmp->next;
+	}
+	return (head);
 }

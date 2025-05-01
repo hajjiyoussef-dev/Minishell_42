@@ -5,67 +5,90 @@ t_toke *lexer(char *line)
 	int i = 0;
 	t_toke *list;
 	char	*word;
-	int expecting_cmd = 1;
+	char tmp;
 
 	list = NULL;
 	while (line[i])
 	{
-		if (line[i] == ' ')
+		if (line[i] == ' ' || (line[i] <= 13 && line[i] >= 9))
 			i++;
 		else if (line[i] == '|')
 		{
-			add_token(&list, create_token("|", "PIPE"));
-			expecting_cmd = 1;
+			add_token(&list, create_token("|", PIPE, line[i + 1]));
 			i++;
 		}
 		else if (line[i] == '\'' || line[i] == '\"')
 		{
+			tmp = line[i];
 			word = copy_quoted_word(line, &i);
-    		add_token(&list, create_token(word, "WORD"));
+			if (tmp == '\"')
+    			add_token(&list, create_token(word, DB_QT, line[i + 1]));
+			else
+    			add_token(&list, create_token(word, SNL_QT, line[i + 1]));
    			free(word);
+			i++;
 		}
 		else if ((line[i] == '>' && line[i + 1] == '>'))
 		{
-			add_token(&list, create_token(">>", "APPEND"));
+			add_token(&list, create_token(">>", APPEND, line[i + 2]));
 			i += 2;
 		}
 		else if (line[i] == '>')
 		{
-			add_token(&list, create_token(">", "REDIR_OUT"));
+			add_token(&list, create_token(">", REDIR_OUT, line[i + 1]));
 			i++;
 		}
 		else if ((line[i] == '<' && line[i + 1] == '<'))
 		{
-			add_token(&list, create_token("<<", "HEREDOC"));
+			add_token(&list, create_token("<<", HEREDOC, line[i + 2]));
 			i += 2;
 		}
 		else if (line[i] == '<')
 		{
-			add_token(&list, create_token("<", "REDIR_IN"));
+			add_token(&list, create_token("<", REDIR_IN, line[i + 1]));
 			i++;
 		}
 		else
 		{
 			word = copy_word(line, &i);
-			if (expecting_cmd)
-				add_token(&list, create_token(word, "CMD"));
-			else
-				add_token(&list, create_token(word, "WORD"));
-			expecting_cmd = 0;
+			add_token(&list, create_token(word, WORD, line[i]));
 			free(word);
 		}
 	}
+	concatinate(list);
 	return (list);
 }
 
-void print_tokens(t_toke *list)
+char *token_type_to_str(t_type type)
 {
-    while (list)
+    if (type == WORD)
+        return "WORD";
+    if (type == PIPE)
+        return "PIPE";
+    if (type == REDIR_IN)
+        return "REDIR_IN";
+    if (type == REDIR_OUT)
+        return "REDIR_OUT";
+    if (type == APPEND)
+        return "APPEND";
+    if (type == HEREDOC)
+        return "HEREDOC";
+    if (type == DB_QT)
+        return "DB_QT";
+    if (type == SNL_QT)
+        return "SNL_QT";
+    return "UNKNOWN";
+}
+
+void print_tokens(t_toke *head)
+{
+    while (head)
     {
-        printf("STR: [%s] | TYPE: [%s]\n", list->str, list->type);
-        list = list->next;
+        printf("STR: [%s] | TYPE: [%s] | bool: [%d]\n", head->str, token_type_to_str(head->type), head->space_after);
+        head = head->next;
     }
 }
+
 
 int main()
 {
@@ -78,6 +101,7 @@ int main()
 			break;
 		add_history(line);
 		list = lexer(line);
+
 		print_tokens(list);
 	}
 	return 0;

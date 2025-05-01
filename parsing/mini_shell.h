@@ -20,17 +20,33 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
+typedef enum s_type
+{
+	PIPE,
+	WORD,
+	DB_QT,
+	SNL_QT,
+	APPEND,
+	REDIR_OUT,
+	HEREDOC,
+	REDIR_IN
+} t_type;
+
 typedef struct s_toke
 {
-    char *str;
-    char *type;
-    struct s_toke *next;
+	char	*str;
+	t_type  type;
+	int		space_after;
+	struct	s_toke	*next;
 } t_toke;
 
-t_toke  *create_token(char *str, char *type);
+t_toke *create_token(char *str, t_type type, char spc_aftr);
 void    add_token(t_toke **list, t_toke *new_token);
 char    *copy_word(char *line, int *i);
 char    *copy_quoted_word(char *line, int *i);
 char    *ft_strdup(char *str);
+char	*ft_strjoin(char *s1, char *s2);
+char    *ft_substr(const char *s, int start, int len);
+t_toke	*concatinate(t_toke *head);
 
 #endif
