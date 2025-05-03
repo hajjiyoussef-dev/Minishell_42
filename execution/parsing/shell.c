@@ -94,13 +94,20 @@ int main(int argc, char **argv, char **envp)
 {
 	t_toke *list;
 	char *line;
-	t_data data;
+	t_data *data = NULL;
 	(void)argc;
 	(void)argv;
 
 	// copy the envp to the struct data for the execution parte (path) !!
-	data.envp = copy_envp(envp);
-	
+	data = gc_malloc(sizeof(t_data));
+	if (!data)
+	{
+		perror("failed malloc");
+		exit(1);
+	}
+	// fprintf(stderr, "hanna1");
+	data->envp = copy_envp(envp);
+	// fprintf(stderr, "hanna2");
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -108,10 +115,10 @@ int main(int argc, char **argv, char **envp)
 			break;
 		add_history(line);
 		list = lexer(line);
-
-		print_tokens(list);
+		data->tokens = list;
+		// print_tokens(list);
 		// execution parte !!!!
-		execute_cmds(list);
+		execute_cmds(data);
 	}
 	return 0;
 }
