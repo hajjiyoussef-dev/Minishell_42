@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:40:26 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/02 07:20:08 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/02 19:03:32 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ typedef struct s_gc {
 typedef struct s_data
 {
 	char **envp;
+	t_toke *tokens;
 
 	char *pwd;
 	char *oldpwd;
@@ -108,7 +109,7 @@ typedef struct s_data
 
 
 // for the test ::
-void execute_cmds(t_toke *tokens);
+void execute_cmds(t_data *data);
 void *gc_malloc(size_t size);
 void free_gc_malloc(void);
 char	*ft_get_argv_path_help(char *cmd, char **paths);
@@ -120,6 +121,7 @@ char **copy_envp(char **envp);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 char	**ft_split(char const *s, char c);
+char	*ft_str_join(char *s1, char *s2);
 
 
 //end of the tools function 

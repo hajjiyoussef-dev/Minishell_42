@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/02 07:19:30 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/02 23:27:39 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ char	*ft_get_argv_path_help(char *cmd, char **paths)
 	i = 0;
 	while (paths[i])
 	{
-		part_path = ft_strjoin(paths[i], "/");
-		real_path = ft_strjoin(part_path, cmd);
+		part_path = ft_str_join(paths[i], "/");
+		real_path = ft_str_join(part_path, cmd);
 		free(part_path);
 		if (access(real_path, X_OK) == 0)
 		{
@@ -32,7 +32,7 @@ char	*ft_get_argv_path_help(char *cmd, char **paths)
 				free(paths[i]);
 				i++;
 			}
-			free(paths);
+			// free(paths);
 			return (real_path);
 		}
 		free(real_path);
@@ -58,7 +58,7 @@ char *find_path(char *argv, char **ev)
 	if (!paths)
 	{
 		
-		free(argv);
+		// free(argv);
 		perror("Error: in geting the pathe");
 	}
 	result = ft_get_argv_path_help(argv, paths);
@@ -108,20 +108,19 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
 }
 
 
-void execute_cmds(t_toke *tokens)
+void execute_cmds(t_data *data)
 {
-    t_toke *curr = tokens;
+    t_toke *curr = data->tokens;
     t_toke *cmd_end ;
     t_toke *cmd_start;
     int p_fds[2];
     pid_t pid;
     int p_read_end_fd = -1;
     char **argv;
-    t_data *cy_envp = NULL;
     
 
-    cmd_start = tokens;
-    printf("%s\n", curr->str);
+    cmd_start = data->tokens;
+    // printf("%s\n", curr->str);
     while (curr)
     {
         cmd_end = NULL;
@@ -138,10 +137,7 @@ void execute_cmds(t_toke *tokens)
             if (curr->type == PIPE)
             {
                 if (pipe(p_fds) == -1)
-                {
                     perror("pipe failed");
-                    exit(1);
-                }
             }
             pid = fork();
             if (pid == 0)
@@ -158,12 +154,18 @@ void execute_cmds(t_toke *tokens)
                     close(p_fds[1]);
                 }
                 argv = build_argv(cmd_start, cmd_end);
-                printf("%s\n", argv[1]);
-                execve(find_path(argv[0], cy_envp->envp), argv, NULL);
+                // printf("\n hna1 %s\n", argv[0]);
+            
+                execve(find_path(argv[0], data->envp), argv, data->envp);
                 perror("execve failed");
-                free_gc_malloc();
+                // free_gc_malloc();
                 exit(1);
                 
+            }
+            else 
+            {
+                int status;
+                waitpid(pid, &status, 0);
             }
             if (p_read_end_fd != -1)
                 close(p_read_end_fd);
