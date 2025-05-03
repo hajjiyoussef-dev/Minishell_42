@@ -21,12 +21,15 @@ t_toke *lexer(char *line)
 		{
 			tmp = line[i];
 			word = copy_quoted_word(line, &i);
-			if (tmp == '\"')
-    			add_token(&list, create_token(word, DB_QT, line[i + 1]));
+			if (line[i] == tmp)
+				i++;
 			else
-    			add_token(&list, create_token(word, SNL_QT, line[i + 1]));
+				return (printf("minishell: syntax error you need close QT\n"), NULL);
+			if (tmp == '\"')
+    			add_token(&list, create_token(word, DB_QT, line[i]));
+			else
+    			add_token(&list, create_token(word, SNL_QT, line[i]));
    			free(word);
-			i++;
 		}
 		else if ((line[i] == '>' && line[i + 1] == '>'))
 		{
@@ -55,7 +58,6 @@ t_toke *lexer(char *line)
 			free(word);
 		}
 	}
-	concatinate(list);
 	return (list);
 }
 
@@ -89,19 +91,28 @@ void print_tokens(t_toke *head)
     }
 }
 
-
-int main()
+int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
+	static int checker;
+	(void)ac;
+	(void)av;
 	while (1)
 	{
 		line = readline("minishell$ ");
 		if (!line)
 			break;
 		add_history(line);
-		list = lexer(line);
-
+		if (!(list = lexer(line)))
+			checker = 2;
+		printf("%d\n", checker);
+		expandd(list, envp, checker);
+		concatinate(list);
+		if (list)
+		{
+			checker = check_syntax(list);
+		}
 		print_tokens(list);
 	}
 	return 0;

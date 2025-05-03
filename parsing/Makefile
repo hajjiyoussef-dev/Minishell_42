@@ -1,10 +1,10 @@
 NAME = minishell
 
-SRC = lexer.c shell.c tools.c
+SRC = lexer.c shell.c tools_0.c syntax.c expand.c tools_1.c
 
 INC = mini_shell.h
 OBJS = ${SRC:.c=.o}
-CC = cc -Wall -Werror -Wextra
+CC = cc  -Wall -Werror -Wextra -g -fsanitize=address
 RM = rm -f
 
 all: ${NAME}
