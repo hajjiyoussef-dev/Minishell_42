@@ -40,6 +40,20 @@ typedef struct s_toke
 	struct	s_toke	*next;
 } t_toke;
 
+typedef struct s_copy
+{
+	char	*key;
+	char	*value;
+	struct	s_copy	*next;
+} t_copy;
+
+
+typedef struct s_data
+{
+	t_toke *token;
+	t_copy *copy_env;
+}	t_data;
+
 t_toke *create_token(char *str, t_type type, char spc_aftr);
 void    add_token(t_toke **list, t_toke *new_token);
 char    *copy_word(char *line, int *i);
@@ -55,5 +69,6 @@ char	*ft_strchr(const char *str, int c);
 size_t	ft_strlen(char const *str);
 char	*ft_joinchar(char *s, char c);
 char	*get_str(char *str, char **envp);
+t_copy	*copy_env(char **envp);
 
 #endif

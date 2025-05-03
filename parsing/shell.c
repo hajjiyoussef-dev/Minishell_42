@@ -91,13 +91,25 @@ void print_tokens(t_toke *head)
     }
 }
 
+
+void print_copy(t_copy *cpy)
+{
+	t_copy *tmp = cpy;
+	while (tmp)
+	{
+		printf("%s \n %s\n", tmp->key, tmp->value);
+		tmp = tmp->next;
+	}
+}
 int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
 	static int checker;
+	t_copy *copy;
 	(void)ac;
 	(void)av;
+	copy = copy_env(envp);
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -106,13 +118,10 @@ int main(int ac, char **av, char **envp)
 		add_history(line);
 		if (!(list = lexer(line)))
 			checker = 2;
-		printf("%d\n", checker);
 		expandd(list, envp, checker);
 		concatinate(list);
 		if (list)
-		{
 			checker = check_syntax(list);
-		}
 		print_tokens(list);
 	}
 	return 0;
