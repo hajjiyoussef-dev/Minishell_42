@@ -20,18 +20,6 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
-
-// for the execution 
-
-typedef struct s_exec_cmd
-{
-	char **argv;
-	char *infile;
-	char *outfile ;
-	int append;  // 1 if >> 0 if >
-	int heredoc; 
-} t_exec_cmd;
-
 typedef enum s_type
 {
 	PIPE,
@@ -60,5 +48,12 @@ char    *ft_strdup(char *str);
 char	*ft_strjoin(char *s1, char *s2);
 char    *ft_substr(const char *s, int start, int len);
 t_toke	*concatinate(t_toke *head);
+int		check_syntax(t_toke *tokens);
+int		ft_strncmp(char *s1, char *s2, unsigned int n);
+void	expandd(t_toke *head, char **envp, int checker);
+char	*ft_strchr(const char *str, int c);
+size_t	ft_strlen(char const *str);
+char	*ft_joinchar(char *s, char c);
+char	*get_str(char *str, char **envp);
 
 #endif

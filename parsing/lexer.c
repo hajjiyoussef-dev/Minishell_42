@@ -84,22 +84,25 @@ int	help_concatinate(t_type type)
 t_toke	*concatinate(t_toke *head)
 {
 	t_toke	*tmp;
-	t_toke	*to_free;
+	t_toke	*nxt;
 
 	tmp = head;
 	while (tmp && tmp->next)
 	{
-		if (!tmp->space_after && help_concatinate(tmp->type)
-			&& help_concatinate(tmp->next->type))
+		nxt = tmp->next;
+		while (nxt && help_concatinate(nxt->type) && help_concatinate(tmp->type)
+				&& !tmp->space_after)
 		{
-			tmp->str = ft_strjoin(tmp->str, tmp->next->str);
-			to_free = tmp->next;
-			tmp->next = tmp->next->next;
-			free(to_free->str);
-			free(to_free);
+			tmp->str = ft_strjoin(tmp->str, nxt->str);
+			if (nxt && nxt->space_after)
+			{
+				nxt = nxt->next;
+				break ;
+			}
+			nxt = nxt->next;
 		}
-		else
-			tmp = tmp->next;
+		tmp->next = nxt;
+		tmp = tmp->next;
 	}
 	return (head);
 }
