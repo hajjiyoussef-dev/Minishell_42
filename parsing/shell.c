@@ -106,7 +106,7 @@ int main(int ac, char **av, char **envp)
 		add_history(line);
 		if (!(list = lexer(line)))
 			checker = 2;
-		printf("%d\n", checker);
+		// printf("%d\n", checker);
 		expandd(list, envp, checker);
 		concatinate(list);
 		if (list)
