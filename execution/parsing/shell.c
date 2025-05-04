@@ -1,4 +1,4 @@
-#include "../test.h"
+#include "../mini_shell.h"
 
 t_toke *lexer(char *line)
 {
@@ -90,35 +90,42 @@ void print_tokens(t_toke *head)
 }
 
 
-int main(int argc, char **argv, char **envp)
+int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
+	static int checker;
+	t_copy *copy;
+	(void)ac;
+	(void)av;
 	t_data *data = NULL;
-	(void)argc;
-	(void)argv;
 
-	// copy the envp to the struct data for the execution parte (path) !!
-	data = gc_malloc(sizeof(t_data));
-	if (!data)
-	{
-		perror("failed malloc");
-		exit(1);
-	}
-	// fprintf(stderr, "hanna1");
-	data->envp = copy_envp(envp);
-	// fprintf(stderr, "hanna2");
+	data = gc_malloc((sizeof(t_data)));
+	copy = copy_env(envp);
+	data->copy_env = copy;
 	while (1)
 	{
+		//signal function !!!
+		signal_setup();
 		line = readline("minishell$ ");
 		if (!line)
 			break;
 		add_history(line);
-		list = lexer(line);
-		data->tokens = list;
+		if (!(list = lexer(line)))
+			checker = 2;
+		// printf("%d\n", checker);
+		expandd(list, envp, checker);
+		concatinate(list);
+		if (list)
+		{
+			checker = check_syntax(list);
+		}
 		// print_tokens(list);
-		// execution parte !!!!
-		execute_cmds(data);
+		if (checker == 0)
+		{
+			data->token = list;
+			execute_cmds(data);
+		}
 	}
 	return 0;
 }

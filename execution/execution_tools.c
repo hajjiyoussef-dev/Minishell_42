@@ -6,14 +6,14 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 04:35:06 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/02 18:48:52 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/04 01:26:03 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "test.h"
+#include "mini_shell.h"
 
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_str_chr(const char *s, int c)
 {
 	unsigned char	c1;
 
@@ -31,7 +31,7 @@ char	*ft_strchr(const char *s, int c)
 	return (0);
 }
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+char	*ft_str_nstr(const char *haystack, const char *needle, size_t len)
 {
 	size_t	i;
 	size_t	j;
@@ -53,25 +53,26 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	}
 	return (NULL);
 }
-
-char **copy_envp(char **envp)
+void ft_putstr_fd(char *str, int fd)
 {
 	int i = 0;
-	char **copy;
 
-	while (envp[i])
-		i++;
-	copy = gc_malloc((i + 1) * sizeof(char *));
-	if (!copy)
-		return (NULL);
-	i = 0;
-	while (envp[i])
+	while(str[i])
 	{
-		copy[i] = ft_strdup(envp[i]);
+		write(fd, &str[i], 1);
 		i++;
 	}
-	copy[i] = NULL;
-	return (copy);	
-	
+}
+
+void ft_putendl_fd(char *str, int fd)
+{
+	int i = 0;
+
+	while (str[i])
+	{
+		write(fd, &str[i], 1);
+		i++;
+	}
+	write(fd, "\n", 1);
 }
 

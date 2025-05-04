@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 20:48:24 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/02 05:25:06 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/03 19:33:40 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "test.h"
+#include "mini_shell.h"
 
 
 t_gc *g_gc = NULL;
