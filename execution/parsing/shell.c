@@ -1,4 +1,4 @@
-#include "../test.h"
+#include "../mini_shell.h"
 
 t_toke *lexer(char *line)
 {
@@ -21,12 +21,15 @@ t_toke *lexer(char *line)
 		{
 			tmp = line[i];
 			word = copy_quoted_word(line, &i);
-			if (tmp == '\"')
-    			add_token(&list, create_token(word, DB_QT, line[i + 1]));
+			if (line[i] == tmp)
+				i++;
 			else
-    			add_token(&list, create_token(word, SNL_QT, line[i + 1]));
+				return (printf("minishell: syntax error you need close QT\n"), NULL);
+			if (tmp == '\"')
+    			add_token(&list, create_token(word, DB_QT, line[i]));
+			else
+    			add_token(&list, create_token(word, SNL_QT, line[i]));
    			free(word);
-			i++;
 		}
 		else if ((line[i] == '>' && line[i + 1] == '>'))
 		{
@@ -55,7 +58,6 @@ t_toke *lexer(char *line)
 			free(word);
 		}
 	}
-	concatinate(list);
 	return (list);
 }
 
@@ -90,35 +92,49 @@ void print_tokens(t_toke *head)
 }
 
 
-int main(int argc, char **argv, char **envp)
+void print_copy(t_copy *cpy)
+{
+	t_copy *tmp = cpy;
+	while (tmp)
+	{
+		printf("%s \n %s\n", tmp->key, tmp->value);
+		tmp = tmp->next;
+	}
+}
+int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
+	static int checker;
+	t_copy *copy;
+	(void)ac;
+	(void)av;
 	t_data *data = NULL;
-	(void)argc;
-	(void)argv;
 
-	// copy the envp to the struct data for the execution parte (path) !!
-	data = gc_malloc(sizeof(t_data));
-	if (!data)
-	{
-		perror("failed malloc");
-		exit(1);
-	}
-	// fprintf(stderr, "hanna1");
-	data->envp = copy_envp(envp);
-	// fprintf(stderr, "hanna2");
+	data = gc_malloc((sizeof(t_data)));
+	copy = copy_env(envp);
+	data->copy_env = copy;
 	while (1)
 	{
 		line = readline("minishell$ ");
 		if (!line)
 			break;
 		add_history(line);
-		list = lexer(line);
-		data->tokens = list;
+		if (!(list = lexer(line)))
+			checker = 2;
+		// printf("%d\n", checker);
+		expandd(list, envp, checker);
+		concatinate(list);
+		if (list)
+		{
+			checker = check_syntax(list);
+		}
 		// print_tokens(list);
-		// execution parte !!!!
-		execute_cmds(data);
+		if (checker == 0)
+		{
+			data->token = list;
+			execute_cmds(data);
+		}
 	}
 	return 0;
 }
