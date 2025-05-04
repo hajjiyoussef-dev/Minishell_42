@@ -92,15 +92,18 @@ void print_tokens(t_toke *head)
 }
 
 
-void print_copy(t_copy *cpy)
-{
-	t_copy *tmp = cpy;
-	while (tmp)
-	{
-		printf("%s \n %s\n", tmp->key, tmp->value);
-		tmp = tmp->next;
-	}
-}
+// <<<<<<< execution
+// =======
+// void print_copy(t_copy *cpy)
+// {
+// 	t_copy *tmp = cpy;
+// 	while (tmp)
+// 	{
+// 		printf("%s \n %s\n", tmp->key, tmp->value);
+// 		tmp = tmp->next;
+// 	}
+// }
+// >>>>>>> main
 int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
@@ -116,6 +119,8 @@ int main(int ac, char **av, char **envp)
 	data->copy_env = copy;
 	while (1)
 	{
+		//signal function !!!
+		signal_setup();
 		line = readline("minishell$ ");
 		if (!line)
 			break;

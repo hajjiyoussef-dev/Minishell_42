@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_redirections.c                              :+:      :+:    :+:   */
+/*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/02 20:05:22 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/03 19:33:42 by yhajji           ###   ########.fr       */
+/*   Created: 2025/05/04 06:00:15 by yhajji            #+#    #+#             */
+/*   Updated: 2025/05/04 06:19:00 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
-
-void handle_redirections(t_toke *cmd_start, t_toke *cmd_end)
+void sigint_handler(int sig)
 {
-	t_toke *curr = cmd_start;
-	int fd;
+	(void)sig;
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
 
-	while (curr != cmd_end)
-	{
-		if (curr->type  = REDIR_OUT && curr->next)
-		{
-			fd = open(curr->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd < 0)
-			{
-				perror("open >  failed");
-			}
-		}
-		
-	}
-	
+void signal_setup_child(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+}
+void signal_setup(void)
+{
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN); 
 }

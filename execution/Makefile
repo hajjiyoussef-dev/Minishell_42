@@ -1,7 +1,9 @@
 NAME = minishell
 
-SRC = ./parsing/lexer.c ./parsing/shell.c ./parsing/tools.c execution.c gc_malloc.c \
-			execution_tools.c ft_split.c ft_strjoin.c
+SRC = ./parsing/lexer.c ./parsing/shell.c  execution.c gc_malloc.c \
+			execution_tools.c ft_split.c ft_strjoin.c ./parsing/syntax.c ./parsing/expand.c \
+			parsing/tools_fun_1.c parsing/copy_env.c parsing/tools_fun_0.c \
+			signal/signal.c
 
 INC = ../test.h
 OBJS = ${SRC:.c=.o}

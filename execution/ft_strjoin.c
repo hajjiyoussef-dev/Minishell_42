@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 19:02:30 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/02 19:04:36 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/04 02:55:39 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "test.h"
+#include "mini_shell.h"
 
 
 size_t	ft_str_len(const char *s)
@@ -27,7 +27,7 @@ size_t	ft_str_len(const char *s)
 	return (i);
 }
 
-char	*ft_str_dup(const char *s1)
+char	*ft_str_dup2(const char *s1)
 {
 	char	*ptr;
 	size_t	i;
@@ -59,9 +59,9 @@ char	*ft_str_join(char *s1, char *s2)
 	if (!s1 && !s2)
 		return (NULL);
 	if (!s1)
-		return (ft_str_dup(s2));
+		return (ft_str_dup2(s2));
 	if (!s2)
-		return (ft_str_dup(s1));
+		return (ft_str_dup2(s1));
 	lens = ft_str_len(s1) + ft_str_len(s2);
 	str = (char *)malloc(lens + 1);
 	if (!str)

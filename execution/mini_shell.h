@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.h                                             :+:      :+:    :+:   */
+/*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:40:26 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/02 19:03:32 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/04 06:11:19 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TEST_H 
-#define TEST_H
+#ifndef MINI_SHELL
+#define MINI_SHELL
 
 
 #include <unistd.h>
@@ -41,7 +41,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
-
+typedef struct s_exec_cmd t_exec_cmd;
 
 typedef enum s_type
 {
@@ -63,6 +63,21 @@ typedef struct s_toke
 	struct	s_toke	*next;
 } t_toke;
 
+typedef struct s_copy
+{
+	char	*key;
+	char	*value;
+	struct	s_copy	*next;
+} t_copy;
+
+
+typedef struct s_data
+{
+	t_toke *token;
+	t_copy *copy_env;
+	int    last_exit_status;
+}	t_data;
+
 t_toke *create_token(char *str, t_type type, char spc_aftr);
 void    add_token(t_toke **list, t_toke *new_token);
 char    *copy_word(char *line, int *i);
@@ -71,9 +86,21 @@ char    *ft_strdup(char *str);
 char	*ft_strjoin(char *s1, char *s2);
 char    *ft_substr(const char *s, int start, int len);
 t_toke	*concatinate(t_toke *head);
+int		check_syntax(t_toke *tokens);
+int		ft_strncmp(char *s1, char *s2, unsigned int n);
+void	expandd(t_toke *head, char **envp, int checker);
+char	*ft_strchr(const char *str, int c);
+size_t	ft_strlen(char const *str);
+char	*ft_joinchar(char *s, char c);
+char	*get_str(char *str, char **envp);
+t_copy	*copy_env(char **envp);
 
+// signals function
 
+void signal_setup_child(void);
+void signal_setup(void);
 
+// end signal function !!!
 
 // end of the test prasing header file 
 // <==============================================================>
@@ -89,21 +116,14 @@ typedef struct s_exec_cmd
 } t_exec_cmd;
 
 
-typedef struct s_gc {
+typedef struct s_gc 
+{
     void            *ptr;
     struct s_gc     *next;
 }   t_gc;
 
 
-typedef struct s_data
-{
-	char **envp;
-	t_toke *tokens;
 
-	char *pwd;
-	char *oldpwd;
-	
-} t_data;
 
 
 
@@ -115,14 +135,15 @@ void free_gc_malloc(void);
 char	*ft_get_argv_path_help(char *cmd, char **paths);
 
 // copy of the envp in the t_data struct !!!
-char **copy_envp(char **envp);
+
 
 //same tools function 
-char	*ft_strchr(const char *s, int c);
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
+char	*ft_str_chr(const char *s, int c);
+char	*ft_str_nstr(const char *haystack, const char *needle, size_t len);
 char	**ft_split(char const *s, char c);
 char	*ft_str_join(char *s1, char *s2);
-
+void ft_putendl_fd(char *str, int fd);
+void ft_putstr_fd(char *str, int fd);
 
 //end of the tools function 
 

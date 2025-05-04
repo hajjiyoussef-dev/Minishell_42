@@ -59,10 +59,45 @@ char	*ft_strjoin(char *s1, char *s2)
 	j = -1;
 	while (s1 && s1[++j])
 		new[j] = s1[j];
+	(j == -1) && (j = 0);
 	i = -1;
 	while (s2 && s2[++i])
 		new[j + i] = s2[i];
 	new[j + i] = '\0';
-	free(s1);
-	return (new);
+	return (free(s1), new);
+}
+
+int	ft_strncmp(char *s1, char *s2, unsigned int n)
+{
+	unsigned int	i;
+
+	i = 0;
+	if (n == 0)
+	{
+		return (0);
+	}
+	while (i < n - 1 && s1[i] && s2[i] && s1[i] == s2[i])
+	{
+		i++;
+	}
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+
+char	*ft_strchr(const char *str, int c)
+{
+	unsigned char	c1;
+	int				i;
+
+	c1 = (unsigned char)c;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == c1)
+		{
+			return ((char *)&str[i]);
+		}
+		i++;
+	}
+	return (NULL);
 }
