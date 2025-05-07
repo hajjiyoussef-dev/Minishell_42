@@ -13,6 +13,7 @@ t_toke *create_token(char *str, t_type type, char spc_aftr)
 		new_toke->space_after = 1;
 	else
 		new_toke->space_after = 0;
+	new_toke->fd = -1;
 	new_toke->next = NULL;
 	return (new_toke);
 }

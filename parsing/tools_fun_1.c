@@ -34,14 +34,71 @@ char	*ft_joinchar(char *s, char c)
 	return (free(s), ret);
 }
 
-char *get_str(char *str, char **envp)
+char *get_str(char *str, t_copy *copy)
 {
-	int i = 0;
-	while (envp[i] && str)
+	t_copy *tmp;
+
+	tmp = copy;
+	while (tmp && str)
 	{
-		if(ft_strncmp(envp[i], str, ft_strlen(str)) == 0)
-			return(ft_strdup(envp[i] + (ft_strlen(str) + 1)));
-		i++;
+		if(ft_strncmp(tmp->key, str, ft_strlen(str)) == 0)
+			return(ft_strdup(tmp->value));
+		tmp = tmp->next;
 	}
 	return (ft_strdup(""));
+}
+
+static int	get_length(int n)
+{
+	int	len;
+
+	len = 0;
+	if (n < 0)
+	{
+		len++;
+	}
+	while (n != 0)
+	{
+		n /= 10;
+		len++;
+	}
+	return (len);
+}
+
+char	*ft_itoa(int n)
+{
+	char	*result;
+	int		len;
+
+	if (n == -2147483648)
+		return (ft_strdup("-2147483648"));
+	if (n == 0)
+		return (ft_strdup("0"));
+	len = get_length(n);
+	result = malloc(len + 1);
+	if (!result)
+		return (NULL);
+	result[len] = '\0';
+	if (n < 0)
+	{
+		result[0] = '-';
+		n = -n;
+	}
+	while (n != 0)
+	{
+		result[len - 1] = (n % 10) + '0';
+		len--;
+		n /= 10;
+	}
+	return (result);
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
