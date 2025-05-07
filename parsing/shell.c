@@ -86,7 +86,7 @@ void print_tokens(t_toke *head)
 {
     while (head)
     {
-        printf("STR: [%s] | TYPE: [%s] | bool: [%d]\n", head->str, token_type_to_str(head->type), head->space_after);
+        printf("STR: [%s] | TYPE: [%s] | fd: [%d]\n", head->str, token_type_to_str(head->type), head->fd);
         head = head->next;
     }
 }
@@ -114,15 +114,22 @@ int main(int ac, char **av, char **envp)
 	{
 		line = readline("minishell$ ");
 		if (!line)
-			break;
+			exit(0);
 		add_history(line);
 		if (!(list = lexer(line)))
 			checker = 2;
-		expandd(list, envp, checker);
+		expandd(list, copy, checker);
+		split_word(list);
 		concatinate(list);
 		if (list)
 			checker = check_syntax(list);
+		handle_file(list);
+		handle_pwd(list);
+		handle_env(list, copy);
+		handle_export(list, copy);
+		handle_unset(list, &copy);
 		print_tokens(list);
 	}
 	return 0;
 }
+

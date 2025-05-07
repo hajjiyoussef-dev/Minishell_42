@@ -10,14 +10,14 @@ int	ft_isalnum(char c)
 	return (ft_isdigit(c) || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 }
 
-char *get_varaible(char *str, int *i, char **envp, int checker)
+char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 {
 	char	*to_search = NULL;
 	if (str && str[*i] == '?')
 	{
 		(*i)++;
-		if (checker == 127)
-			return (ft_strdup("127"));
+		if (checker == 2)
+			return (ft_strdup("2"));
 		return (ft_strdup("0"));
 	}
 	if (str && (ft_isdigit(str[*i]) || str[*i] == '$'))
@@ -30,11 +30,11 @@ char *get_varaible(char *str, int *i, char **envp, int checker)
 		to_search = ft_joinchar(to_search, str[*i]);
 		(*i)++;
 	}
-	return (get_str(to_search, envp));
+	return (get_str(to_search, copy));
 }
 
 
-char	*expnand_it(char *str, char **envp, int checker)
+char	*expnand_it(char *str, t_copy *copy, int checker)
 {
 	char	*res = NULL;
 	int		i = 0;
@@ -44,7 +44,7 @@ char	*expnand_it(char *str, char **envp, int checker)
 		if (str[i] == '$' && str[i+1])
 		{
 			i++;
-			res = ft_strjoin(res, get_varaible(str, &i, envp, checker));
+			res = ft_strjoin(res, get_varaible(str, &i, copy, checker));
 		}
 		else
 		{
@@ -55,7 +55,7 @@ char	*expnand_it(char *str, char **envp, int checker)
 	return (res);
 }
 
-void expandd(t_toke *head, char **envp, int checker)
+void expandd(t_toke *head, t_copy *copy, int checker)
 {
 	t_toke *tmp;
 
@@ -64,7 +64,7 @@ void expandd(t_toke *head, char **envp, int checker)
 	{
 		if ((tmp->type == WORD || tmp->type == DB_QT) && ft_strchr(tmp->str, '$'))
 		{
-			tmp->str = expnand_it(tmp->str, envp, checker);
+			tmp->str = expnand_it(tmp->str, copy, checker);
 		}
 		tmp = tmp->next;
 	}

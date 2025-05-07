@@ -1,6 +1,7 @@
 NAME = minishell
 
-SRC = lexer.c shell.c tools_fun_0.c syntax.c expand.c tools_fun_1.c copy_env.c
+SRC = lexer.c shell.c tools_fun_0.c syntax.c expand.c tools_fun_1.c copy_env.c \
+		rediraction.c pwd.c split_word.c ft_splite.c
 
 INC = mini_shell.h
 OBJS = ${SRC:.c=.o}

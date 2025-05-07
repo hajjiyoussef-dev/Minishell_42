@@ -43,7 +43,7 @@ t_copy *copy_env(char **envp)
         j = 0;
         while (envp[i][j] && envp[i][j] != '=')
             j++;
-        key = ft_substr(envp[i], 0, j + 1);
+        key = ft_substr(envp[i], 0, j);
         if (!key)
             return (NULL);
         value = ft_substr(envp[i], j + 1, ft_strlen(envp[i]) - j);
@@ -55,4 +55,48 @@ t_copy *copy_env(char **envp)
         i++;
     }
     return (copy);
+}
+int is_found(t_copy *copy, char *key)
+{
+    t_copy *tmp;
+
+    tmp = copy;
+    while (tmp)
+    {
+        if (!ft_strcmp(key, tmp->key))
+            return(0);
+        tmp = tmp->next;
+    }
+    return (1);
+}
+
+void handle_export(t_toke *toke, t_copy *copy)
+{
+    t_toke *tmp;
+    int j;
+    char *key;
+    char *value;
+
+    tmp = toke;
+    while (tmp)
+    {
+        if (!ft_strcmp("export", tmp->str) && tmp->next)
+        {
+            j = 0;
+            while (tmp->next->str[j] && tmp->next->str[j] != '=')
+                j++;
+            key = ft_substr(tmp->next->str, 0, j);
+            if (!is_found(copy, key))
+                return(free(key));
+            if (!key)
+                return ;
+            value = ft_substr(tmp->next->str, j + 1, ft_strlen(tmp->next->str) - j);
+            if (!value)
+                return ;
+            add_back(&copy, new_node(key, value));
+            free(key);
+            free(value);
+        }
+        tmp = tmp->next;
+    }
 }

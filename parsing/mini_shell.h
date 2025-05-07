@@ -37,6 +37,7 @@ typedef struct s_toke
 	char	*str;
 	t_type  type;
 	int		space_after;
+	int		fd;
 	struct	s_toke	*next;
 } t_toke;
 
@@ -64,11 +65,20 @@ char    *ft_substr(const char *s, int start, int len);
 t_toke	*concatinate(t_toke *head);
 int		check_syntax(t_toke *tokens);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
-void	expandd(t_toke *head, char **envp, int checker);
+int		ft_strcmp(char *s1, char *s2);
+void	expandd(t_toke *head, t_copy *copy, int checker);
 char	*ft_strchr(const char *str, int c);
 size_t	ft_strlen(char const *str);
 char	*ft_joinchar(char *s, char c);
-char	*get_str(char *str, char **envp);
+char	*get_str(char *str, t_copy *copy);
 t_copy	*copy_env(char **envp);
+char	*ft_itoa(int n);
+void	handle_file(t_toke *toke);
+void	handle_pwd(t_toke *toke);
+void	handle_env(t_toke *toke, t_copy *copy);
+void	handle_export(t_toke *toke, t_copy *copy);
+void	handle_unset(t_toke *toke, t_copy **copy);
+char	**ft_split(char const *s, char c);
+void	split_word(t_toke *toke);
 
 #endif
