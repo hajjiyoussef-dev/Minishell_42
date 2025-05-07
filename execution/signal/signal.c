@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 06:00:15 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/04 06:19:00 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/06 17:02:04 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,4 @@ void signal_setup(void)
 {
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN); 
 }

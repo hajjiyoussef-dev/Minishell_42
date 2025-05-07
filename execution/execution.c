@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/04 06:12:38 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/06 16:54:17 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char *find_path(char *argv, char **ev)
 	if (!paths)
 	{
 		// free(argv);
-		perror("Error: in geting the pathe");
+		perror("Error: in geting the pathe\n");
 	}
 	result = ft_get_argv_path_help(argv, paths);
 	// if (!result)
@@ -118,7 +118,7 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
     // argv = gc_malloc((sizeof(char *) *(argc + 1)));
     if (!argv)
     {
-        perror("malloc failed");
+        perror("malloc failed\n");
         free_gc_malloc();
         exit(1);
     }
@@ -130,7 +130,7 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
             argv[i] = ft_strdup(curr->str);
             if (!argv[i])
             {
-                perror("ft_strdup failed");
+                perror("ft_strdup failed\n");
                 exit(1);
             }
         }
@@ -175,7 +175,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     cmd_path = find_path(argv[0], env_list_to_array(data->copy_env));
     if (!cmd_path)
     {
-        ft_putstr_fd("minibash: command not found: ", STDERR_FILENO);
+        ft_putstr_fd("minibash: command not found: \n", STDERR_FILENO);
         ft_putendl_fd(argv[0], STDERR_FILENO);
         data->last_exit_status = 127;
         free_gc_malloc();
@@ -186,7 +186,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     {
         
         execve(cmd_path, argv, env_list_to_array(data->copy_env));
-        perror("execve failed");
+        perror("execve failed\n");
         free_gc_malloc();
         exit(1);
     }
@@ -204,7 +204,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     }
     else 
     {
-        perror("fork failed");
+        perror("fork failed\n");
         data->last_exit_status = 1;
     }
     free(cmd_path);
