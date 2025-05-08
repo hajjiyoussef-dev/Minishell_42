@@ -1,4 +1,4 @@
-#include "../mini_shell.h"
+#include "mini_shell.h"
 
 int	print_error(const char *msg)
 {

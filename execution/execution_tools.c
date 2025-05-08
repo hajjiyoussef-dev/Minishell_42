@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 04:35:06 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/04 01:26:03 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/07 23:04:00 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../parsing/mini_shell.h"
 
 
 char	*ft_str_chr(const char *s, int c)
@@ -31,7 +31,7 @@ char	*ft_str_chr(const char *s, int c)
 	return (0);
 }
 
-char	*ft_str_nstr(const char *haystack, const char *needle, size_t len)
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
 	size_t	i;
 	size_t	j;

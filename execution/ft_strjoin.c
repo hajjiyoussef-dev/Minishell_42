@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 19:02:30 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/04 02:55:39 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/07 20:33:06 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../parsing/mini_shell.h"
 
 
 size_t	ft_str_len(const char *s)
