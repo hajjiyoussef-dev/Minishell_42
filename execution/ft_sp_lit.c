@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 06:45:23 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/03 19:33:33 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/07 20:52:29 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../parsing/mini_shell.h"
 
 static void	help_free(char **string, int i)
 {
@@ -89,7 +89,7 @@ static char	**help_split(const char *s, char c, char **string)
 	return (string);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_sp_lit(char const *s, char c)
 {
 	char	**string;
 

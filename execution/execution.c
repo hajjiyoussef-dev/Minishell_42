@@ -6,12 +6,19 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/04 06:12:38 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/08 09:06:40 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../parsing/mini_shell.h"
 
+// for now !!!
+char *ft_str_join3(char *s1, char *s2, char *s3)
+{
+    char *tmp = ft_str_join(s1, s2);
+    char *result = ft_str_join(tmp, s3);
+    return (result);
+}
 
 char **env_list_to_array(t_copy *copy_envp)
 {
@@ -35,7 +42,8 @@ char **env_list_to_array(t_copy *copy_envp)
     tmp = copy_envp;
     while (i < count)
     {
-        joined = ft_str_join(tmp->key, tmp->value);
+        joined = ft_str_join3(tmp->key, "=", tmp->value);
+        // joined = ft_str_join(tmp->key, tmp->value);
         envp_array[i] = joined;
         // free(joined);
         tmp = tmp->next;
@@ -81,17 +89,19 @@ char *find_path(char *argv, char **ev)
 	char	*result;
 
 	if (ft_str_chr(argv, '/') && access(argv, X_OK) == 0)
-		return (ft_strdup(argv));
+		return (ft_str_dup2(argv));
 	i = 0;
-	while (ev[i] && ft_str_nstr(ev[i], "PATH=", 5) == NULL)
+	while (ev[i] && ft_strnstr(ev[i], "PATH=", 5) == NULL)
 		i++;
 	if (!ev[i])
 		return (NULL);
-	paths = ft_split(ev[i] + 5, ':');
+	paths = ft_sp_lit(ev[i] + 5, ':');
+     
+   // printf("sjdfkjdsbfjsdb\n");
 	if (!paths)
 	{
 		// free(argv);
-		perror("Error: in geting the pathe");
+		perror("Error: in geting the pathe\n");
 	}
 	result = ft_get_argv_path_help(argv, paths);
 	// if (!result)
@@ -118,7 +128,7 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
     // argv = gc_malloc((sizeof(char *) *(argc + 1)));
     if (!argv)
     {
-        perror("malloc failed");
+        perror("malloc failed\n");
         free_gc_malloc();
         exit(1);
     }
@@ -130,7 +140,7 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
             argv[i] = ft_strdup(curr->str);
             if (!argv[i])
             {
-                perror("ft_strdup failed");
+                perror("ft_strdup failed\n");
                 exit(1);
             }
         }
@@ -142,10 +152,55 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
     return (argv);
 }
 
-// bool is_cmd_buitin(char *argv)
-// {
-    
-// }
+bool is_cmd_buitin(char *argv)
+{
+    static char *buiti[] = {"env", "unset", "export", "pwd", "cd", "echo", "exit",  NULL};
+    int i;
+
+    i = 0;
+    while (buiti[i] != NULL)
+    {
+         if (ft_strcmp(argv, buiti[i]) == 0)
+            return (true);   
+        i++;
+    }
+    return (false);
+}
+
+int execute_builtin(char **argv, t_data *data)
+{
+    if (ft_strcmp(argv[0], "env") == 0)
+    {
+        handle_env(data->token, data->copy_env);
+        return (0);
+    }
+    else if (ft_strcmp(argv[0], "unset") == 0)
+    {
+        handle_unset(data->token, &data->copy_env);
+        return (0);
+    }
+    else if (ft_strcmp(argv[0], "pwd") == 0)
+    {
+        return (handle_pwd(data->token)); 
+    }
+    else if (ft_strcmp(argv[0], "export") == 0)
+    {
+       return(handle_export(data->token, data->copy_env));
+    }
+    else if (ft_strcmp(argv[0], "cd") == 0)
+    {
+        return (handle_cd(argv, data));
+    }
+    // else if (ft_strcmp(argv[0], "echo") == 0)
+    // {
+    //     return (handle_echo(data->token, data->copy_env));
+    // }
+    // else if (ft_strcmp(argv[0], "exit") == 0)
+    // {
+    //     return (handle_exit(data->token, data->copy_env));
+    // }
+    return (0);
+}
 
 void execute_cmd(t_data *data, t_toke *start, t_toke *end)
 {
@@ -157,20 +212,17 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
 
     signal_setup_child();
     argv = build_argv(start, end);
-    // printf("{%s} {%s}\n", start->str, end->str);
-    // // for (int i = 0; argv && argv[i]; i++)
-    // printf(" %s\n",argv[0]);
     if (!argv || !argv[0])
     {
         free_gc_malloc();
         return;
     }
-    // if (is_cmd_buitin(argv[0]))
-    // {
-    //     data->last_exit_status = execute_builtin(argv, data);
-    //     free(argv);
-    //     return;
-    // }
+    if (is_cmd_buitin(argv[0]))
+    {
+        data->last_exit_status = execute_builtin(argv, data);
+        free(argv);
+        return;
+    }
 
     cmd_path = find_path(argv[0], env_list_to_array(data->copy_env));
     if (!cmd_path)
@@ -186,8 +238,8 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     {
         
         execve(cmd_path, argv, env_list_to_array(data->copy_env));
-        perror("execve failed");
-        free_gc_malloc();
+        perror("execve failed\n");
+        // free_gc_malloc();
         exit(1);
     }
     else if (pid > 0)
@@ -204,7 +256,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     }
     else 
     {
-        perror("fork failed");
+        perror("fork failed\n");
         data->last_exit_status = 1;
     }
     free(cmd_path);

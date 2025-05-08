@@ -20,6 +20,11 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
+
+#ifndef PATH_MAX
+# define PATH_MAX 4096
+#endif
+
 typedef enum s_type
 {
 	PIPE,
@@ -53,7 +58,10 @@ typedef struct s_data
 {
 	t_toke *token;
 	t_copy *copy_env;
+	int    last_exit_status;
 }	t_data;
+
+
 
 t_toke *create_token(char *str, t_type type, char spc_aftr);
 void    add_token(t_toke **list, t_toke *new_token);
@@ -74,11 +82,75 @@ char	*get_str(char *str, t_copy *copy);
 t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
 void	handle_file(t_toke *toke);
-void	handle_pwd(t_toke *toke);
-void	handle_env(t_toke *toke, t_copy *copy);
-void	handle_export(t_toke *toke, t_copy *copy);
-void	handle_unset(t_toke *toke, t_copy **copy);
 char	**ft_split(char const *s, char c);
 void	split_word(t_toke *toke);
+
+//builtins function !!!
+
+void 	add_back(t_copy **list, t_copy *new_copy);
+t_copy *new_node(char *key, char *value);
+int 	handle_pwd(t_toke *toke);
+void	handle_env(t_toke *toke, t_copy *copy);
+int		handle_export(t_toke *toke, t_copy *copy);
+void	handle_unset(t_toke *toke, t_copy **copy);
+int 	handle_cd(char **argv, t_data *data);
+
+
+// end buitlins function !!!!!
+
+
+
+// signals function
+
+void signal_setup_child(void);
+void signal_setup(void);
+
+// end signal function !!!
+
+// end of the test prasing header file 
+// <==============================================================>
+// the start of the  execution 
+
+typedef struct s_exec_cmd
+{
+	char **argv;
+	char *infile;
+	char *outfile ;
+	int append;  // 1 if >> 0 if >
+	int heredoc; 
+} t_exec_cmd;
+
+
+typedef struct s_gc 
+{
+    void            *ptr;
+    struct s_gc     *next;
+}   t_gc;
+
+
+
+
+
+
+
+// for the test ::
+void execute_cmds(t_data *data);
+void *gc_malloc(size_t size);
+void free_gc_malloc(void);
+char	*ft_get_argv_path_help(char *cmd, char **paths);
+
+// copy of the envp in the t_data struct !!!
+
+
+//same tools function 
+char	*ft_str_chr(const char *s, int c);
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
+char	**ft_sp_lit(char const *s, char c);
+char	*ft_str_join(char *s1, char *s2);
+char	*ft_str_dup2(const char *s1);
+void ft_putendl_fd(char *str, int fd);
+void ft_putstr_fd(char *str, int fd);
+
+//end of the tools function 
 
 #endif

@@ -1,4 +1,4 @@
-#include "../mini_shell.h"
+#include "mini_shell.h"
 
 t_toke *lexer(char *line)
 {
@@ -92,68 +92,57 @@ void print_tokens(t_toke *head)
 }
 
 
-// <<<<<<< execution
-// =======
-// void print_copy(t_copy *cpy)
-// {
-// 	t_copy *tmp = cpy;
-// 	while (tmp)
-// 	{
-// 		printf("%s \n %s\n", tmp->key, tmp->value);
-// 		tmp = tmp->next;
-// 	}
-// }
-// >>>>>>> main
+void print_copy(t_copy *cpy)
+{
+	t_copy *tmp = cpy;
+	while (tmp)
+	{
+		printf("%s \n %s\n", tmp->key, tmp->value);
+		tmp = tmp->next;
+	}
+}
 int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
 	static int checker;
-	t_copy *copy;
+	// t_copy *copy;
 	(void)ac;
 	(void)av;
 	t_data *data = NULL;
+	// some  shite 
+	char *cmd;
+	char *name;
+	
 
 	data = gc_malloc((sizeof(t_data)));
-	copy = copy_env(envp);
-	data->copy_env = copy;
+	// copy = copy_env(envp);
+	data->copy_env = copy_env(envp);
 	while (1)
 	{
-		//signal function !!!
 		signal_setup();
-		line = readline("minishell$ ");
+		cmd = getcwd(NULL, 0);
+		name = ft_str_join(cmd, "$ ");
+		line = readline(name);
 		if (!line)
 			exit(0);
 		add_history(line);
 		if (!(list = lexer(line)))
 			checker = 2;
-<<<<<<< HEAD:execution/parsing/shell.c
-		// printf("%d\n", checker);
-		expandd(list, envp, checker);
-=======
-		expandd(list, copy, checker);
+		expandd(list, data->copy_env, checker);
 		split_word(list);
->>>>>>> me:parsing/shell.c
 		concatinate(list);
 		if (list)
-		{
 			checker = check_syntax(list);
-<<<<<<< HEAD:execution/parsing/shell.c
-		}
+		handle_file(list);
 		// print_tokens(list);
 		if (checker == 0)
 		{
 			data->token = list;
 			execute_cmds(data);
 		}
-=======
-		handle_file(list);
-		handle_pwd(list);
-		handle_env(list, copy);
-		handle_export(list, copy);
-		handle_unset(list, &copy);
-		print_tokens(list);
->>>>>>> me:parsing/shell.c
+		// free(cmd);
+		free(name);
 	}
 	return 0;
 }
