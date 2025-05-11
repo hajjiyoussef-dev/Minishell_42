@@ -22,7 +22,7 @@ char *ft_strdup(char *str)
 }
 
 
-char *ft_substr(const char *s, int start, int len)
+char *ft_substr(char *s, int start, int len)
 {
     char    *sub;
     int     i = 0;

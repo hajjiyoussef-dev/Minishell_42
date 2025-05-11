@@ -25,6 +25,8 @@
 # define PATH_MAX 4096
 #endif
 
+
+
 typedef enum s_type
 {
 	PIPE,
@@ -69,7 +71,7 @@ char    *copy_word(char *line, int *i);
 char    *copy_quoted_word(char *line, int *i);
 char    *ft_strdup(char *str);
 char	*ft_strjoin(char *s1, char *s2);
-char    *ft_substr(const char *s, int start, int len);
+char    *ft_substr(char *s, int start, int len);
 t_toke	*concatinate(t_toke *head);
 int		check_syntax(t_toke *tokens);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
@@ -89,11 +91,13 @@ void	split_word(t_toke *toke);
 
 void 	add_back(t_copy **list, t_copy *new_copy);
 t_copy *new_node(char *key, char *value);
-int 	handle_pwd(t_toke *toke);
-void	handle_env(t_toke *toke, t_copy *copy);
-int		handle_export(t_toke *toke, t_copy *copy);
+int 	handle_pwd(t_data *data);
+void handle_env(t_toke *toke, t_copy *copy);
+int handle_export(t_data *data);
 void	handle_unset(t_toke *toke, t_copy **copy);
 int 	handle_cd(char **argv, t_data *data);
+char *get_the_pathe(t_copy *copy_env, char *str);
+int handle_echo(t_data *data);
 
 
 // end buitlins function !!!!!
@@ -150,6 +154,7 @@ char	*ft_str_join(char *s1, char *s2);
 char	*ft_str_dup2(const char *s1);
 void ft_putendl_fd(char *str, int fd);
 void ft_putstr_fd(char *str, int fd);
+void ft_putendl_fd_2(char *str, int fd);
 
 //end of the tools function 
 
