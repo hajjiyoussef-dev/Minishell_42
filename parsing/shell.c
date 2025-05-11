@@ -90,39 +90,85 @@ void print_tokens(t_toke *head)
         head = head->next;
     }
 }
-
-
-void print_copy(t_copy *cpy)
+char	*ft_strrchr(const char *s, int c)
 {
-	t_copy *tmp = cpy;
-	while (tmp)
+	const char		*last_one;
+	unsigned char	c1;
+
+	last_one = NULL;
+	c1 = (unsigned char)c;
+	while (*s != '\0')
 	{
-		printf("%s \n %s\n", tmp->key, tmp->value);
-		tmp = tmp->next;
+		if (*s == c1)
+		{
+			last_one = s;
+		}
+		s++;
 	}
+	if (c1 == '\0')
+		return ((char *)s);
+	return ((char *)last_one);
 }
+
+
+char *minishell_name()
+{
+	char *cmd;
+	char *name;
+	char *new_cmd;
+	char *result;
+	char *result_2;
+	char *result_3;
+	char *colored;
+
+	cmd = getcwd(NULL, 0);
+	if (!cmd)
+		return (NULL);
+	name = ft_str_join(cmd, "$ ");
+	free(cmd);
+	if (!name)
+		return (NULL);
+	new_cmd = ft_strrchr(name, '/');
+	if (!new_cmd)
+		result = ft_strdup(name);  
+	else
+		result = ft_strdup(new_cmd + 1); 
+	free(name);
+	if (!result)
+		return (NULL);
+
+	colored = ft_str_join("\033[1;34m", result);    
+	free(result);
+	result = ft_str_join(colored, "\033[0m");       
+	free(colored);
+	colored = ft_str_join("\033[1;32m" , "->");
+	result_2 = ft_str_join(colored, "\033[0m ");
+	free(colored);
+	result_3 = ft_str_join(result_2, result);
+	return (result_3);
+}
+
+
 int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
 	static int checker;
-	// t_copy *copy;
 	(void)ac;
 	(void)av;
 	t_data *data = NULL;
 	// some  shite 
-	char *cmd;
 	char *name;
+	t_copy *copy = NULL;
 	
-
-	data = gc_malloc((sizeof(t_data)));
-	// copy = copy_env(envp);
-	data->copy_env = copy_env(envp);
+	data = malloc((sizeof(t_data)));
+	copy = copy_env(envp);
+	data->copy_env = copy;
+	printf("\033[2J\033[H");
 	while (1)
 	{
 		signal_setup();
-		cmd = getcwd(NULL, 0);
-		name = ft_str_join(cmd, "$ ");
+		name = minishell_name();
 		line = readline(name);
 		if (!line)
 			exit(0);

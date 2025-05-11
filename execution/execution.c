@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/08 09:06:40 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/11 08:21:30 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,23 +181,23 @@ int execute_builtin(char **argv, t_data *data)
     }
     else if (ft_strcmp(argv[0], "pwd") == 0)
     {
-        return (handle_pwd(data->token)); 
+        return (handle_pwd(data)); 
     }
     else if (ft_strcmp(argv[0], "export") == 0)
     {
-       return(handle_export(data->token, data->copy_env));
+       return(handle_export(data));
     }
     else if (ft_strcmp(argv[0], "cd") == 0)
     {
         return (handle_cd(argv, data));
     }
-    // else if (ft_strcmp(argv[0], "echo") == 0)
-    // {
-    //     return (handle_echo(data->token, data->copy_env));
-    // }
+    else if (ft_strcmp(argv[0], "echo") == 0)
+    {
+        return (handle_echo(data));
+    }
     // else if (ft_strcmp(argv[0], "exit") == 0)
     // {
-    //     return (handle_exit(data->token, data->copy_env));
+    //     return (handle_exit(data));
     // }
     return (0);
 }
@@ -263,6 +263,27 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     free(argv);
 }
 
+int is_single_builtin_cmd(t_toke *start, t_toke *end)
+{
+    // Make sure there's no pipe in this segment
+    t_toke *curr = start;
+    while (curr && curr != end->next)
+    {
+        if (curr->type == PIPE)
+            return 0;
+        curr = curr->next;
+    }
+    // It is a single command — check if it's a builtin
+    if (start && is_cmd_buitin(start->str) &&
+        (ft_strcmp(start->str, "cd") == 0 ||
+         ft_strcmp(start->str, "export") == 0 ||
+         ft_strcmp(start->str, "unset") == 0 ||
+         ft_strcmp(start->str, "exit") == 0 || 
+         ft_strcmp(start->str, "echo") == 0))
+        return 1;
+    return 0;
+}
+
 
 void execute_cmds(t_data *data)
 {
@@ -271,18 +292,23 @@ void execute_cmds(t_data *data)
     int p_fds[2];
     pid_t pid;
     int p_read_end_fd = -1;
+    // char **argv;
     
-
+    
     cmd_start = curr;
-   
     while (curr)
     {
         if (curr->type == PIPE || curr->next == NULL)
         {
-        
             if (curr->type == PIPE && pipe(p_fds) == -1)
             {
                 perror("pipe failed");
+                return;
+            }
+            if (is_single_builtin_cmd(cmd_start, curr))
+            {
+                printf("hanna1\n");
+                data->last_exit_status = execute_builtin(&cmd_start->str, data);
                 return;
             }
             pid = fork();
@@ -307,6 +333,7 @@ void execute_cmds(t_data *data)
             {
                 perror("fork failed");
             }
+            
             if (p_read_end_fd != -1)
                 close(p_read_end_fd);
             if (curr->type == PIPE)
@@ -318,7 +345,6 @@ void execute_cmds(t_data *data)
         }
         curr = curr->next;
     }
+    
     while (waitpid(-1, NULL, 0) > 0);
-    
-    
 }
