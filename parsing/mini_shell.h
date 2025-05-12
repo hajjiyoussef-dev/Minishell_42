@@ -84,15 +84,16 @@ char	*ft_itoa(int n);
 void	handle_file(t_toke *toke);
 char	**ft_split(char const *s, char c);
 void	split_word(t_toke *toke);
+void	print_copy(t_copy *cpy);
 
 //builtins function !!!
 
 void 	add_back(t_copy **list, t_copy *new_copy);
 t_copy *new_node(char *key, char *value);
 int 	handle_pwd(t_toke *toke);
-void	handle_env(t_toke *toke, t_copy *copy);
-int		handle_export(t_toke *toke, t_copy *copy);
-void	handle_unset(t_toke *toke, t_copy **copy);
+void	handle_env(t_data  *data);
+int		handle_export(t_data  *data);
+void	handle_unset(t_data  *data);
 int 	handle_cd(char **argv, t_data *data);
 
 

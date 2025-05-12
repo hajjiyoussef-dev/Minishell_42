@@ -1,47 +1,69 @@
 #include "../../parsing/mini_shell.h"
 
-int is_found(t_copy *copy, char *key)
+void	update_var(t_copy **env, char *key, char *value, int append)
 {
-    t_copy *tmp;
+	t_copy	*cur;
 
-    tmp = copy;
-    while (tmp)
-    {
-        if (!ft_strcmp(key, tmp->key))
-            return(0);
-        tmp = tmp->next;
-    }
-    return (1);
+	if (!env || !key || !value)
+		return;
+
+	cur = *env;
+	while (cur)
+	{
+		if (!ft_strcmp(cur->key, key))
+		{
+			if (append)
+			{
+				char *new_val = ft_strjoin(cur->value, value);
+				free(cur->value);
+				cur->value = new_val;
+			}
+			else
+			{
+				free(cur->value);
+				cur->value = ft_strdup(value);
+			}
+			return;
+		}
+		cur = cur->next;
+	}
+	add_back(env, new_node(ft_strdup(key), ft_strdup(value)));
 }
 
-int handle_export(t_toke *toke, t_copy *copy)
+int handle_export(t_data *data)
 {
-    t_toke *tmp;
-    int j;
-    char *key;
-    char *value;
+	t_toke *tmp;
+	int j;
+	int append;
+	char *key;
+	char *value;
 
-    tmp = toke;
-    while (tmp)
-    {
-        if (!ft_strcmp("export", tmp->str) && tmp->next)
-        {
-            j = 0;
-            while (tmp->next->str[j] && tmp->next->str[j] != '=')
-                j++;
-            key = ft_substr(tmp->next->str, 0, j);
-            if (!is_found(copy, key))
-                return(free(key), 1);
-            if (!key)
-                return (1);
-            value = ft_substr(tmp->next->str, j + 1, ft_strlen(tmp->next->str) - j);
-            if (!value)
-                return (1);
-            add_back(&copy, new_node(key, value));
-            free(key);
-            free(value);
-        }
-        tmp = tmp->next;
-    }
-    return (0);
+	tmp = data->token;
+	while (tmp)
+	{
+		if (!ft_strcmp("export", tmp->str) && tmp->next)
+		{
+			j = 0;
+			while (tmp->next->str[j] && tmp->next->str[j] != '=')
+            {
+	            if (tmp->next->str[j] == '+' && tmp->next->str[j + 1] == '=')
+	            {
+	            	append = 1;
+	            	break;
+	            }
+	            j++;
+            }
+			key = ft_substr(tmp->next->str, 0, j);
+			if (!key)
+				return (1);
+			value = ft_substr(tmp->next->str, j + 1, ft_strlen(tmp->next->str) - j);
+			if (!value)
+				return (free(key), 1);
+			update_var(&data->copy_env, key, value, append);
+			free(key);
+			free(value);
+		}
+		tmp = tmp->next;
+	}
+	return (0);
 }

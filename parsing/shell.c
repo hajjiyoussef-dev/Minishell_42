@@ -97,7 +97,7 @@ void print_copy(t_copy *cpy)
 	t_copy *tmp = cpy;
 	while (tmp)
 	{
-		printf("%s \n %s\n", tmp->key, tmp->value);
+		printf("%s=%s\n", tmp->key, tmp->value);
 		tmp = tmp->next;
 	}
 }
@@ -106,7 +106,6 @@ int main(int ac, char **av, char **envp)
 	t_toke *list;
 	char *line;
 	static int checker;
-	// t_copy *copy;
 	(void)ac;
 	(void)av;
 	t_data *data = NULL;
@@ -128,17 +127,27 @@ int main(int ac, char **av, char **envp)
 			exit(0);
 		add_history(line);
 		if (!(list = lexer(line)))
+		{
 			checker = 2;
+			continue ;
+		}
 		expandd(list, data->copy_env, checker);
 		split_word(list);
 		concatinate(list);
+		print_tokens(list);
 		if (list)
+		{
 			checker = check_syntax(list);
+			if (checker)
+				continue ;
+		}
 		handle_file(list);
-		// print_tokens(list);
 		if (checker == 0)
 		{
 			data->token = list;
+			// handle_env(data);
+			// handle_unset(data);
+			// handle_export(data);
 			execute_cmds(data);
 		}
 		// free(cmd);
