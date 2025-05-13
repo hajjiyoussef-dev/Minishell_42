@@ -168,7 +168,9 @@ int main(int ac, char **av, char **envp)
 	while (1)
 	{
 		signal_setup();
-		name = minishell_name();
+		// name = minishell_name();
+		char *cmd = get_the_pathe(data->copy_env, "PWD");
+		name = ft_str_join(cmd, "$ ");
 		line = readline(name);
 		if (!line)
 			exit(0);
@@ -180,10 +182,10 @@ int main(int ac, char **av, char **envp)
 		concatinate(list);
 		if (list)
 			checker = check_syntax(list);
-		handle_file(list);
-		// print_tokens(list);
+			// print_tokens(list);
 		if (checker == 0)
 		{
+			handle_file(list, data);
 			data->token = list;
 			execute_cmds(data);
 		}

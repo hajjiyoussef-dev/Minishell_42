@@ -25,7 +25,7 @@
 # define PATH_MAX 4096
 #endif
 
-
+typedef struct s_data t_data;
 
 typedef enum s_type
 {
@@ -45,7 +45,10 @@ typedef struct s_toke
 	t_type  type;
 	int		space_after;
 	int		fd;
+	t_data *data;
+
 	struct	s_toke	*next;
+	struct	s_toke	*prev;
 } t_toke;
 
 typedef struct s_copy
@@ -61,6 +64,7 @@ typedef struct s_data
 	t_toke *token;
 	t_copy *copy_env;
 	int    last_exit_status;
+	int redirection_failed;
 }	t_data;
 
 
@@ -83,7 +87,7 @@ char	*ft_joinchar(char *s, char c);
 char	*get_str(char *str, t_copy *copy);
 t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
-void	handle_file(t_toke *toke);
+void	handle_file(t_toke *toke, t_data *data);
 char	**ft_split(char const *s, char c);
 void	split_word(t_toke *toke);
 
