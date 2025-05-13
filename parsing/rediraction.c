@@ -29,12 +29,13 @@ int handle_heredoc(t_toke *toke, int flag)
 	return (fd);
 }
 
-void	handle_file(t_toke *toke)
+void	handle_file(t_toke *toke, t_data *data)
 {
 	t_toke *tmp;
 	int flag = 1;
 
 	tmp = toke;
+	data->redirection_failed = 0;
 	while (tmp)
 	{
 		if (tmp->type == PIPE)
@@ -43,11 +44,12 @@ void	handle_file(t_toke *toke)
 		{
 			if (flag)
 			{
-				tmp->fd = open(tmp->next->str, O_RDONLY | O_CREAT | O_APPEND, 0644);
+				tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
 				if (tmp->fd < 0)
 				{
 					flag = 0;
 					printf("minshell : %s Permission denied\n", tmp->next->str);
+					data->redirection_failed = 1;
 				}
 			}
 		}
@@ -59,7 +61,8 @@ void	handle_file(t_toke *toke)
 				if (tmp->fd < 0)
 				{
 					flag = 0;
-					printf("minshell : %s Permission denied\n", tmp->next->str);
+					printf("minshell : %s No such file or directory\n", tmp->next->str);
+					data->redirection_failed = 1;
 				}
 			}
 		}
@@ -67,11 +70,12 @@ void	handle_file(t_toke *toke)
 		{
 			if (flag)
 			{
-				tmp->fd = open(tmp->next->str, O_RDONLY | O_CREAT | O_TRUNC, 0644);
+				tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (tmp->fd < 0)
 				{
 					flag = 0;
 					printf("minshell : %s Permission denied\n", tmp->next->str);
+					data->redirection_failed = 1;
 				}
 			}
 		}
