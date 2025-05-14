@@ -173,7 +173,7 @@ int main(int ac, char **av, char **envp)
 		name = ft_str_join(cmd, "$ ");
 		line = readline(name);
 		if (!line)
-			exit(0);
+			break ;
 		add_history(line);
 		if (!(list = lexer(line)))
 			checker = 2;
