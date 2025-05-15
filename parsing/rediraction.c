@@ -1,5 +1,13 @@
 #include "mini_shell.h"
 
+char	*expand_line(char *line, t_data *data)
+{
+	if (ft_strchr(line, '$'))
+		line = expnand_it(line, data->copy_env, data->last_exit_status);
+	return(line);
+}
+
+
 int handle_heredoc(t_toke *toke, int flag, t_data *data)
 {
 	int fd;
@@ -9,10 +17,11 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 	char *line;
 
 	data->redirection_failed = 0;
+	// while (!access(path, F_OK))
 	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(iF++));
 	w_fd = open(path, O_CREAT | O_TRUNC, 0644);
 	if (w_fd < 0)
-		return (printf("minishell : heredoc error\n"), data->redirection_failed == 1, -1);
+		return (printf("minishell : heredoc error\n"), data->redirection_failed = 1, -1);
 	while (1)
 	{
 		line = NULL;
@@ -20,6 +29,8 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 			line = readline("PIPE heredoc> ");
 		else
 			line = readline("heredoc> ");
+		if (toke->next->type == WORD)
+			line = expand_line(line, data);
 		if (!line || !ft_strcmp(toke->next->str, line))
 		{
 			free(line);
@@ -32,17 +43,17 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 	close(w_fd);
 	fd = open(path, O_RDONLY);
 	unlink(path);
-	// printf("%d\n", fd);
 	return (fd);
 }
 
-void	handle_file(t_toke *toke, t_data *data)
+void	handle_file(t_data *data)
 {
 	t_toke *tmp;
 	int flag = 1;
 
-	tmp = toke;
+	tmp = data->token;
 	data->redirection_failed = 0;
+
 	while (tmp)
 	{
 		if (tmp->type == PIPE)
@@ -87,10 +98,7 @@ void	handle_file(t_toke *toke, t_data *data)
 			}
 		}
 		if (tmp->type == HEREDOC)
-		{
-
 			tmp->fd = handle_heredoc(tmp, flag, data);
-		}
 		tmp = tmp->next;
 	}
 }

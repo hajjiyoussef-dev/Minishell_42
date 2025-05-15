@@ -62,6 +62,7 @@ int handle_export(t_data *data)
 {
 	t_toke *tmp;
 	int j;
+	int k = 0;
 	int append;
 	char *key;
 	char *value;
@@ -71,8 +72,9 @@ int handle_export(t_data *data)
 	{
 		if (!ft_strcmp("export", tmp->str))
 		{
-			if (tmp->next)
+			while (tmp->next && tmp->next->type == WORD)
 			{
+				k++;
 				j = 0;
 				if (!((tmp->next->str[j] >= 'a' && tmp->next->str[j] <= 'z') || (tmp->next->str[j] >= 'A' && tmp->next->str[j] <= 'Z')))
 				{
@@ -102,8 +104,9 @@ int handle_export(t_data *data)
 				update_var(&data->copy_env, key, value, append);
 				free(key);
 				free(value);
+				tmp->next = tmp->next->next;
 			}
-			else
+			if (!k)
 				print_export(data);
 		}
 		tmp = tmp->next;

@@ -41,7 +41,7 @@ char *get_str(char *str, t_copy *copy)
 	tmp = copy;
 	while (tmp && str)
 	{
-		if(ft_strncmp(tmp->key, str, ft_strlen(str)) == 0)
+		if(ft_strcmp(tmp->key, str) == 0)
 			return(ft_strdup(tmp->value));
 		tmp = tmp->next;
 	}

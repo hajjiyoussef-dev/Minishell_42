@@ -84,9 +84,10 @@ char	*ft_strchr(const char *str, int c);
 size_t	ft_strlen(char const *str);
 char	*ft_joinchar(char *s, char c);
 char	*get_str(char *str, t_copy *copy);
+char	*expnand_it(char *str, t_copy *copy, int checker);
 t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
-void	handle_file(t_toke *toke, t_data *data);
+void	handle_file(t_data *data);
 char	**ft_split(char const *s, char c);
 void	split_word(t_toke *toke);
 
