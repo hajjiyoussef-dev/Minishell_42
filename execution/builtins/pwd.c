@@ -1,26 +1,29 @@
 #include "../../parsing/mini_shell.h"
 
 
-int handle_pwd(t_toke *toke)
+int handle_pwd(t_data *data)
 {
-    t_toke *tmp;
+    char *pwd;
+	t_toke *tmp;
 	char *check;
 
-    tmp = toke;
-    while (tmp)
-    {
-        if (!ft_strcmp("pwd", tmp->str))
+    tmp = data->token;
+	pwd = get_the_pathe(data->copy_env, "PWD");
+	if (pwd != NULL)
+	{
+		printf("%s\n", pwd);
+		return (0);
+	}
+	else
+	{
+		check = getcwd(NULL, 0);
+		if (check != NULL)
 		{
-			check = getcwd(NULL, 0);
-            if (check != NULL)
-			{
-				printf("%s\n", getcwd(NULL, 0));
-				return (0);
-			}
-			else
-				return (1);
+			printf("%s\n", getcwd(NULL, 0));
+			return (0);
 		}
-        tmp = tmp->next;
-    }
+		else
+			return (1);
+	}
 	return (1);
 }

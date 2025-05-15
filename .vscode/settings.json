@@ -1,5 +1,12 @@
 {
 	"files.associations": {
-		"mini_shell.h": "c"
+		"mini_shell.h": "c",
+		"array": "c",
+		"memory": "c",
+		"ranges": "c",
+		"functional": "c",
+		"tuple": "c",
+		"utility": "c",
+		"readline.h": "c"
 	}
 }

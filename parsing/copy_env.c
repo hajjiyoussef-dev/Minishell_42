@@ -17,22 +17,25 @@ void add_back(t_copy **list, t_copy *new_copy)
 {
     t_copy *tmp;
 
-    if (!*list)
-        *list = new_copy;
-    else
-    {
-        tmp = *list;
-        while (tmp->next)
-        {
-            fprintf(stderr, "%s : %s\n", new_copy->key, new_copy->value);
-            tmp = tmp->next;
-        }
-        tmp->next = new_copy;
-    }
+	if (!*list)
+		*list = new_copy;
+	else
+	{
+		tmp = *list;
+		while (tmp->next)
+		{
+			tmp = tmp->next;
+		}
+		tmp->next = new_copy;
+	}
 }
+
+
+
 
 t_copy *copy_env(char **envp)
 {
+
     int i = 0;
     int j;
     char *key;

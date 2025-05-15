@@ -20,10 +20,11 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
-
 #ifndef PATH_MAX
 # define PATH_MAX 4096
 #endif
+
+typedef struct s_data t_data;
 
 typedef enum s_type
 {
@@ -43,7 +44,10 @@ typedef struct s_toke
 	t_type  type;
 	int		space_after;
 	int		fd;
+	t_data *data;
+
 	struct	s_toke	*next;
+	struct	s_toke	*prev;
 } t_toke;
 
 typedef struct s_copy
@@ -59,6 +63,7 @@ typedef struct s_data
 	t_toke *token;
 	t_copy *copy_env;
 	int    last_exit_status;
+	int redirection_failed;
 }	t_data;
 
 
@@ -69,7 +74,7 @@ char    *copy_word(char *line, int *i);
 char    *copy_quoted_word(char *line, int *i);
 char    *ft_strdup(char *str);
 char	*ft_strjoin(char *s1, char *s2);
-char    *ft_substr(const char *s, int start, int len);
+char    *ft_substr(char *s, int start, int len);
 t_toke	*concatinate(t_toke *head);
 int		check_syntax(t_toke *tokens);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
@@ -81,7 +86,7 @@ char	*ft_joinchar(char *s, char c);
 char	*get_str(char *str, t_copy *copy);
 t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
-void	handle_file(t_toke *toke);
+void	handle_file(t_toke *toke, t_data *data);
 char	**ft_split(char const *s, char c);
 void	split_word(t_toke *toke);
 void	print_copy(t_copy *cpy);
@@ -91,10 +96,12 @@ void	print_copy(t_copy *cpy);
 void 	add_back(t_copy **list, t_copy *new_copy);
 t_copy *new_node(char *key, char *value);
 int 	handle_pwd(t_toke *toke);
-void	handle_env(t_data  *data);
-int		handle_export(t_data  *data);
-void	handle_unset(t_data  *data);
+void	handle_env(t_toke *toke, t_copy *copy);
+int		handle_export(t_toke *toke, t_copy *copy);
+void	handle_unset(t_toke *toke, t_copy **copy);
 int 	handle_cd(char **argv, t_data *data);
+char *get_the_pathe(t_copy *copy_env, char *str);
+int handle_echo(t_data *data);
 
 
 // end buitlins function !!!!!
@@ -151,6 +158,7 @@ char	*ft_str_join(char *s1, char *s2);
 char	*ft_str_dup2(const char *s1);
 void ft_putendl_fd(char *str, int fd);
 void ft_putstr_fd(char *str, int fd);
+void ft_putendl_fd_2(char *str, int fd);
 
 //end of the tools function 
 

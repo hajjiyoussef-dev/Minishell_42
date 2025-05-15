@@ -18,5 +18,10 @@ void handle_env(t_data  *data)
             }
         }
         tmp = tmp->next;
+<<<<<<< HEAD
     }
 }
+=======
+    }   
+}
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
