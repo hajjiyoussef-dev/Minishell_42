@@ -113,18 +113,46 @@ char	*ft_strrchr(const char *s, int c)
 
 char *minishell_name()
 {
-	t_copy *tmp = cpy;
-	while (tmp)
-	{
-		printf("%s \n %s\n", tmp->key, tmp->value);
-		tmp = tmp->next;
-	}
+	char *cmd;
+	char *name;
+	char *new_cmd;
+	char *result;
+	char *result_2;
+	char *result_3;
+	char *colored;
+
+	cmd = getcwd(NULL, 0);
+	if (!cmd)
+		return (NULL);
+	name = ft_str_join(cmd, "$ ");
+	free(cmd);
+	if (!name)
+		return (NULL);
+	new_cmd = ft_strrchr(name, '/');
+	if (!new_cmd)
+		result = ft_strdup(name);  
+	else
+		result = ft_strdup(new_cmd + 1); 
+	free(name);
+	if (!result)
+		return (NULL);
+
+	colored = ft_str_join("\033[1;34m", result);    
+	free(result);
+	result = ft_str_join(colored, "\033[0m");       
+	free(colored);
+	colored = ft_str_join("\033[1;32m" , "->");
+	result_2 = ft_str_join(colored, "\033[0m ");
+	free(colored);
+	result_3 = ft_str_join(result_2, result);
+	return (result_3);
 }
+
+
 int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
-	static int checker;
 	(void)ac;
 	(void)av;
 	t_data *data = NULL;
@@ -147,26 +175,17 @@ int main(int ac, char **av, char **envp)
 			break ;
 		add_history(line);
 		if (!(list = lexer(line)))
-		{
-			checker = 2;
-			continue ;
-		}
-		expandd(list, data->copy_env, checker);
+			data->last_exit_status = 2;
+		expandd(list, data->copy_env, data->last_exit_status);
 		split_word(list);
 		concatinate(list);
-		print_tokens(list);
 		if (list)
-		{
-			checker = check_syntax(list);
-		handle_file(list);
+			data->last_exit_status = check_syntax(list);
 		// print_tokens(list);
-		if (checker == 0)
+		if (data->last_exit_status == 0)
 		{
-			handle_file(list, data);
 			data->token = list;
-			// handle_env(data);
-			// handle_unset(data);
-			// handle_export(data);
+			handle_file(data);
 			execute_cmds(data);
 		}
 		// free(cmd);
@@ -174,4 +193,3 @@ int main(int ac, char **av, char **envp)
 	}
 	return 0;
 }
-

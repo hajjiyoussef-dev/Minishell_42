@@ -14,10 +14,7 @@ void	remove_var(t_copy *copy, char *key)
 			if (!prev)
 			copy = cur->next;
 			else
-			{
-				printf("hnnnna\n");
 				prev->next = cur->next;
-			}
 			free(cur);
 			break ;
 		}
@@ -34,7 +31,10 @@ void	handle_unset(t_data  *data)
 	while (tmp)
 	{
 		if (!ft_strcmp("unset", tmp->str) && tmp->next)
-			remove_var(data->copy_env, tmp->next->str);
-		tmp = tmp->next;
-	}
-}
+		{
+			while (tmp->next && tmp->next->type == WORD)
+			{
+				remove_var(*copy, tmp->next->str);
+				tmp->next = tmp->next->next;
+			}
+		}
