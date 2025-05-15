@@ -1,61 +1,17 @@
 #include "../../parsing/mini_shell.h"
 
-
-void	update_var(t_copy **env, char *key, char *value, int append)
+int is_found(t_copy *copy, char *key)
 {
-	t_copy	*cur;
-	char *new_val;
+    t_copy *tmp;
 
-	cur = *env;
-	while (cur)
-	{
-		if (!ft_strcmp(cur->key, key))
-		{
-			if (append)
-			{
-				new_val = ft_strjoin(cur->value, value + 1);
-				cur->value = new_val;
-			}
-			else
-			{
-				free(cur->value);
-				cur->value = ft_strdup(value);
-			}
-			return;
-		}
-		cur = cur->next;
-	}
-	add_back(env, new_node(ft_strdup(key), ft_strdup(value)));
-}
-
-void print_export(t_data *data)
-{
-	t_copy *tmp;
-	char c = 'A';
-
-	while (c <= 'Z')	
-	{
-		tmp = data->copy_env;
-		while (tmp)
-		{
-			if (tmp->key[0] == c)
-				printf("%s %s=%s\n", "declare -x", tmp->key, tmp->value);
-			tmp = tmp->next;
-		}
-		c++;
-	}
-	c = 'a';
-	while (c <= 'z')	
-	{
-		tmp = data->copy_env;
-		while (tmp)
-		{
-			if (tmp->key[0] == c)
-				printf("%s %s=%s\n", "declare -x", tmp->key, tmp->value);
-			tmp = tmp->next;
-		}
-		c++;
-	}
+    tmp = copy;
+    while (tmp)
+    {
+        if (!ft_strcmp(key, tmp->key))
+            return(0);
+        tmp = tmp->next;
+    }
+    return (1);
 }
 
 int handle_export(t_data *data)
@@ -66,7 +22,7 @@ int handle_export(t_data *data)
 	int append;
 	char *key;
 	char *value;
-
+  
 	tmp = data->token;
 	while (tmp)
 	{

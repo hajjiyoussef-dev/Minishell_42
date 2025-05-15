@@ -23,11 +23,11 @@ void	remove_var(t_copy *copy, char *key)
 	}
 }
 
-void	handle_unset(t_toke *toke, t_copy **copy)
+void	handle_unset(t_data  *data)
 {
 	t_toke	*tmp;
 
-	tmp = toke;
+	tmp = data->token;
 	while (tmp)
 	{
 		if (!ft_strcmp("unset", tmp->str) && tmp->next)
@@ -38,6 +38,3 @@ void	handle_unset(t_toke *toke, t_copy **copy)
 				tmp->next = tmp->next->next;
 			}
 		}
-		tmp = tmp->next;
-	}
-}

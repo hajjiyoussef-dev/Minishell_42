@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
+<<<<<<< HEAD
+/*   Updated: 2025/05/09 12:31:10 by hrami            ###   ########.fr       */
+=======
 /*   Updated: 2025/05/11 08:21:30 by yhajji           ###   ########.fr       */
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,65 +54,64 @@ char **env_list_to_array(t_copy *copy_envp)
         i++;
     }
     envp_array[i] = NULL;
-    return (envp_array); 
+    return (envp_array);
 }
 
-char	*ft_get_argv_path_help(char *cmd, char **paths)
+char *ft_get_argv_path_help(char *cmd, char **paths)
 {
-	int		i;
-	char	*part_path;
-	char	*real_path;
+    int i;
+    char *part_path;
+    char *real_path;
 
-	i = 0;
-	while (paths[i])
-	{
-		part_path = ft_str_join(paths[i], "/");
-		real_path = ft_str_join(part_path, cmd);
-		free(part_path);
-		if (access(real_path, X_OK) == 0)
-		{
-			i = 0;
-			while (paths[i])
-			{
-				free(paths[i]);
-				i++;
-			}
-			// free(paths);
-			return (real_path);
-		}
-		free(real_path);
-		i++;
-	}
-	return (NULL);
+    i = 0;
+    while (paths[i])
+    {
+        part_path = ft_str_join(paths[i], "/");
+        real_path = ft_str_join(part_path, cmd);
+        free(part_path);
+        if (access(real_path, X_OK) == 0)
+        {
+            i = 0;
+            while (paths[i])
+            {
+                free(paths[i]);
+                i++;
+            }
+            // free(paths);
+            return (real_path);
+        }
+        free(real_path);
+        i++;
+    }
+    return (NULL);
 }
 
 char *find_path(char *argv, char **ev)
 {
-    int		i;
-	char	**paths;
-	char	*result;
+    int i;
+    char **paths;
+    char *result;
 
-	if (ft_str_chr(argv, '/') && access(argv, X_OK) == 0)
-		return (ft_str_dup2(argv));
-	i = 0;
-	while (ev[i] && ft_strnstr(ev[i], "PATH=", 5) == NULL)
-		i++;
-	if (!ev[i])
-		return (NULL);
-	paths = ft_sp_lit(ev[i] + 5, ':');
-     
-   // printf("sjdfkjdsbfjsdb\n");
-	if (!paths)
-	{
-		// free(argv);
-		perror("Error: in geting the pathe\n");
-	}
-	result = ft_get_argv_path_help(argv, paths);
-	// if (!result)
-	// 	ft_free(paths);
-	return (result);
+    if (ft_str_chr(argv, '/') && access(argv, X_OK) == 0)
+        return (ft_str_dup2(argv));
+    i = 0;
+    while (ev[i] && ft_strnstr(ev[i], "PATH=", 5) == NULL)
+        i++;
+    if (!ev[i])
+        return (NULL);
+    paths = ft_sp_lit(ev[i] + 5, ':');
+
+    // printf("sjdfkjdsbfjsdb\n");
+    if (!paths)
+    {
+        // free(argv);
+        perror("Error: in geting the pathe\n");
+    }
+    result = ft_get_argv_path_help(argv, paths);
+    // if (!result)
+    // 	ft_free(paths);
+    return (result);
 }
-
 
 char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
 {
@@ -116,7 +119,7 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
     t_toke *curr;
     char **argv;
     int i = 0;
-    
+
     curr = cmd_start;
     while ((curr != end_cmd->next) && curr != NULL)
     {
@@ -124,7 +127,7 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
             argc++;
         curr = curr->next;
     }
-    argv = malloc(sizeof(char *) *(argc + 1));
+    argv = malloc(sizeof(char *) * (argc + 1));
     // argv = gc_malloc((sizeof(char *) *(argc + 1)));
     if (!argv)
     {
@@ -154,14 +157,14 @@ char **build_argv(t_toke *cmd_start, t_toke *end_cmd)
 
 bool is_cmd_buitin(char *argv)
 {
-    static char *buiti[] = {"env", "unset", "export", "pwd", "cd", "echo", "exit",  NULL};
+    static char *buiti[] = {"env", "unset", "export", "pwd", "cd", "echo", "exit", NULL};
     int i;
 
     i = 0;
     while (buiti[i] != NULL)
     {
-         if (ft_strcmp(argv, buiti[i]) == 0)
-            return (true);   
+        if (ft_strcmp(argv, buiti[i]) == 0)
+            return (true);
         i++;
     }
     return (false);
@@ -171,21 +174,29 @@ int execute_builtin(char **argv, t_data *data)
 {
     if (ft_strcmp(argv[0], "env") == 0)
     {
-        handle_env(data->token, data->copy_env);
+        handle_env(data);
         return (0);
     }
     else if (ft_strcmp(argv[0], "unset") == 0)
     {
-        handle_unset(data->token, &data->copy_env);
+        handle_unset(data);
         return (0);
     }
     else if (ft_strcmp(argv[0], "pwd") == 0)
     {
+<<<<<<< HEAD
+        return (handle_pwd(data->token));
+    }
+    else if (ft_strcmp(argv[0], "export") == 0)
+    {
+        return (handle_export(data));
+=======
         return (handle_pwd(data)); 
     }
     else if (ft_strcmp(argv[0], "export") == 0)
     {
        return(handle_export(data));
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
     }
     else if (ft_strcmp(argv[0], "cd") == 0)
     {
@@ -208,7 +219,6 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     char *cmd_path;
     pid_t pid;
     int status;
-
 
     signal_setup_child();
     argv = build_argv(start, end);
@@ -236,7 +246,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     pid = fork();
     if (pid == 0)
     {
-        
+
         execve(cmd_path, argv, env_list_to_array(data->copy_env));
         perror("execve failed\n");
         // free_gc_malloc();
@@ -247,14 +257,14 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
         waitpid(pid, &status, 0);
         // if(WIFEXITED(status))
         // {
-        //     data->last_exit_status = WEXITSTATUS(status); 
+        //     data->last_exit_status = WEXITSTATUS(status);
         // }
         // else if (WIFSIGNALED(status))
         // {
         //     data->last_exit_status = 128 ; //..
         // }
     }
-    else 
+    else
     {
         perror("fork failed\n");
         data->last_exit_status = 1;
@@ -263,6 +273,8 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     free(argv);
 }
 
+<<<<<<< HEAD
+=======
 int is_single_builtin_cmd(t_toke *start, t_toke *end)
 {
     // Make sure there's no pipe in this segment
@@ -285,6 +297,7 @@ int is_single_builtin_cmd(t_toke *start, t_toke *end)
 }
 
 
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
 void execute_cmds(t_data *data)
 {
     t_toke *curr = data->token;
@@ -292,25 +305,47 @@ void execute_cmds(t_data *data)
     int p_fds[2];
     pid_t pid;
     int p_read_end_fd = -1;
+<<<<<<< HEAD
+    char **argv;
+
+    cmd_start = curr;
+
+=======
     // char **argv;
     
     
     cmd_start = curr;
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
     while (curr)
     {
+        argv = build_argv(cmd_start, curr);
+        if (is_cmd_buitin(argv[0]))
+        {
+            data->last_exit_status = execute_builtin(argv, data);
+            free(argv);
+            return;
+        }
         if (curr->type == PIPE || curr->next == NULL)
         {
+<<<<<<< HEAD
+
+=======
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
             if (curr->type == PIPE && pipe(p_fds) == -1)
             {
                 perror("pipe failed");
                 return;
             }
+<<<<<<< HEAD
+
+=======
             if (is_single_builtin_cmd(cmd_start, curr))
             {
                 printf("hanna1\n");
                 data->last_exit_status = execute_builtin(&cmd_start->str, data);
                 return;
             }
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
             pid = fork();
             if (pid == 0)
             {
@@ -345,6 +380,11 @@ void execute_cmds(t_data *data)
         }
         curr = curr->next;
     }
+<<<<<<< HEAD
+    while (waitpid(-1, NULL, 0) > 0)
+        ;
+=======
     
     while (waitpid(-1, NULL, 0) > 0);
+>>>>>>> b6836bb24728ae25b705fab440d3ab3715d59138
 }
