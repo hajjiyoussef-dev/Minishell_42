@@ -26,7 +26,7 @@ int	check_syntax(t_toke *tokens)
 	{
 		if (cur->type == PIPE && (!cur->next || cur->next->type == PIPE))
 			return (print_error("|"));
-        if (is_redrict(cur->type) && (!cur->next || cur->next->type != WORD))
+        if (is_redrict(cur->type) && (!cur->next || is_redrict(cur->next->type) || cur->next->type == PIPE))
 		{
 			if (!cur->next)
 				return (print_error("newline"));

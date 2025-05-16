@@ -14,10 +14,7 @@ void	remove_var(t_copy *copy, char *key)
 			if (!prev)
 			copy = cur->next;
 			else
-			{
-				printf("hnnnna\n");
 				prev->next = cur->next;
-			}
 			free(cur);
 			break ;
 		}
@@ -26,15 +23,18 @@ void	remove_var(t_copy *copy, char *key)
 	}
 }
 
-void	handle_unset(t_toke *toke, t_copy **copy)
+void	handle_unset(t_data  *data)
 {
 	t_toke	*tmp;
 
-	tmp = toke;
+	tmp = data->token;
 	while (tmp)
 	{
 		if (!ft_strcmp("unset", tmp->str) && tmp->next)
-			remove_var(*copy, tmp->next->str);
-		tmp = tmp->next;
-	}
-}
+		{
+			while (tmp->next && tmp->next->type == WORD)
+			{
+				remove_var(*copy, tmp->next->str);
+				tmp->next = tmp->next->next;
+			}
+		}
