@@ -160,7 +160,8 @@ int main(int ac, char **av, char **envp)
 	// some  shite 
 	char *name;
 	t_copy *copy = NULL;
-	
+	if (!isatty(0) || !isatty(1))
+		return (printf("test the project in the r\n"), 0);
 	data = malloc((sizeof(t_data)));
 	copy = copy_env(envp);
 	data->copy_env = copy;
@@ -182,11 +183,11 @@ int main(int ac, char **av, char **envp)
 		concatinate(list);
 		if (list)
 			checker = check_syntax(list);
-			// print_tokens(list);
+		// print_tokens(list);
 		if (checker == 0)
 		{
-			handle_file(list, data);
 			data->token = list;
+			handle_file(data);
 			execute_cmds(data);
 		}
 		// free(cmd);

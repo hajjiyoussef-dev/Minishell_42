@@ -32,6 +32,7 @@ void add_token(t_toke **list, t_toke *new_token)
 			tmp = tmp->next;
 		}
 		tmp->next = new_token;
+		new_token->prev = tmp;
 	}
 }
 

@@ -62,7 +62,13 @@ void expandd(t_toke *head, t_copy *copy, int checker)
 	tmp = head;
 	while (tmp)
 	{
-		if ((tmp->type == WORD || tmp->type == DB_QT) && ft_strchr(tmp->str, '$'))
+		if (tmp->type == HEREDOC)
+		{
+			tmp = tmp->next;
+			if (!tmp)
+				break ;
+		}
+		else if ((tmp->type == WORD || tmp->type == DB_QT) && ft_strchr(tmp->str, '$'))
 		{
 			tmp->str = expnand_it(tmp->str, copy, checker);
 		}

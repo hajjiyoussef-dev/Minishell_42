@@ -86,9 +86,10 @@ char	*ft_joinchar(char *s, char c);
 char	*get_str(char *str, t_copy *copy);
 t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
-void	handle_file(t_toke *toke, t_data *data);
+void	handle_file(t_data *data);
 char	**ft_split(char const *s, char c);
 void	split_word(t_toke *toke);
+char	*expnand_it(char *str, t_copy *copy, int checker);
 
 //builtins function !!!
 
@@ -100,7 +101,8 @@ int handle_export(t_data *data);
 void	handle_unset(t_toke *toke, t_copy **copy);
 int 	handle_cd(char **argv, t_data *data);
 char *get_the_pathe(t_copy *copy_env, char *str);
-int handle_echo(t_data *data);
+int handle_echo(t_toke *start);
+int handle_exit(t_toke *start);
 
 
 // end buitlins function !!!!!
