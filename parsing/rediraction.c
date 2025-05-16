@@ -29,13 +29,13 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 			line = readline("PIPE heredoc> ");
 		else
 			line = readline("heredoc> ");
-		if (toke->next->type == WORD)
-			line = expand_line(line, data);
 		if (!line || !ft_strcmp(toke->next->str, line))
 		{
 			free(line);
 			break ;
 		}
+		if (toke->next->type == WORD)
+			line = expand_line(line, data);
 		write(w_fd, line, ft_strlen(line));
 		write(w_fd, "\n", 1);
 		free(line);

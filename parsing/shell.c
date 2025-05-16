@@ -181,7 +181,7 @@ int main(int ac, char **av, char **envp)
 		concatinate(list);
 		if (list)
 			data->last_exit_status = check_syntax(list);
-		// print_tokens(list);
+		print_tokens(list);
 		if (data->last_exit_status == 0)
 		{
 			data->token = list;

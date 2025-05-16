@@ -82,6 +82,7 @@ int	help_concatinate(t_type type)
 		return (1);
 	return (0);
 }
+
 t_toke	*concatinate(t_toke *head)
 {
 	t_toke	*tmp;
