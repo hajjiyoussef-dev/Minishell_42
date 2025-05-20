@@ -40,8 +40,21 @@ t_copy *copy_env(char **envp)
     int j;
     char    *key;
     char    *value;
+    static char    *k[]= {"PWD", "SHLVL", "_", NULL};
+    static char    *v[] = {"/home/yhajji/Desktop/Minishell_42/parsing", "1", "/usr/bin/env", NULL};
     t_copy *copy = NULL;
-
+    if (envp == NULL || envp[0] == NULL)
+    { 
+        printf("----\n");
+        while (i < 3)
+        {
+            key = ft_strdup(k[i]);
+            value = ft_strdup(v[i]);
+            add_back(&copy, new_node(key, value));
+            i++;
+        }
+        return (copy);
+    }
     while (envp[i])
     {
         j = 0;

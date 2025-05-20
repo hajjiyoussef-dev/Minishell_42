@@ -153,18 +153,16 @@ int main(int ac, char **av, char **envp)
 {
 	t_toke *list;
 	char *line;
-	static int checker;
 	(void)ac;
 	(void)av;
 	t_data *data = NULL;
 	// some  shite 
 	char *name;
-	t_copy *copy = NULL;
+	// t_copy *copy = NULL;
 	if (!isatty(0) || !isatty(1))
 		return (printf("test the project in the r\n"), 0);
 	data = malloc((sizeof(t_data)));
-	copy = copy_env(envp);
-	data->copy_env = copy;
+	data->copy_env = copy_env(envp);
 	printf("\033[2J\033[H");
 	while (1)
 	{
@@ -177,14 +175,14 @@ int main(int ac, char **av, char **envp)
 			break ;
 		add_history(line);
 		if (!(list = lexer(line)))
-			checker = 2;
-		expandd(list, data->copy_env, checker);
+			data->last_exit_status = 2;
+		expandd(list, data->copy_env, data->last_exit_status);
 		split_word(list);
 		concatinate(list);
-		if (list)
-			checker = check_syntax(list);
 		// print_tokens(list);
-		if (checker == 0)
+		if (list)
+			data->last_exit_status = check_syntax(list);
+		if (data->last_exit_status == 0)
 		{
 			data->token = list;
 			handle_file(data);

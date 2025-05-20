@@ -12,20 +12,16 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 {
 	int fd;
 	int w_fd;
-	static int iF;
+	static int file;
 	char *path;
 	char *line;
 
+	if (file == 16)
+		return(printf("%s\n", "minishell: maximum here-document count exceeded"), exit(2), 1);
 	data->redirection_failed = 0;
 	// while (!access(path, F_OK))
-	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(iF++));
-	// falg dyal write lah n3al tabon mook rah fat7 file bla falg bash tktab fih zamal !!!!!!!!!!1!
-	// (!)
-	// ||
-	// || // hak zob !!!
-	// ||
-   // ()()
-	w_fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(file++));
+	w_fd = open(path, O_CREAT | O_TRUNC, 0644);
 	if (w_fd < 0)
 		return (printf("minishell : heredoc error\n"), data->redirection_failed = 1, -1);
 	while (1)
@@ -35,7 +31,12 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 			line = readline("PIPE heredoc> ");
 		else
 			line = readline("heredoc> ");
-		if (!line || !ft_strcmp(toke->next->str, line))
+		if (!line)
+		{
+			printf("minishell: warning: here-document at delimited by end-of-file (wanted `%s')\n", toke->next->str);
+			break ;
+		}
+		if (!ft_strcmp(toke->next->str, line))
 		{
 			free(line);
 			break ;

@@ -8,7 +8,7 @@ SRC = lexer.c shell.c tools_fun_0.c syntax.c expand.c tools_fun_1.c copy_env.c \
 
 INC = mini_shell.h
 OBJS = ${SRC:.c=.o}
-CC = cc  -Wall -Werror -Wextra #-g -fsanitize=address
+CC = cc  -Wall -Werror -Wextra   #-g -fsanitize=address
 RM = rm -f
 
 all:  ${NAME}
