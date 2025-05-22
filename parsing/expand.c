@@ -20,7 +20,7 @@ char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 			return (ft_strdup("2"));
 		else if (checker == 127)
 			return (ft_strdup("127"));
-		return (ft_strdup("0"));
+		return (ft_strdup(ft_itoa(checker)));
 	}
 	if (str && (ft_isdigit(str[*i]) || str[*i] == '$'))
 	{

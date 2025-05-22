@@ -191,6 +191,6 @@ int main(int ac, char **av, char **envp)
 		// free(cmd);
 		free(name);
 	}
-	return 0;
+	return (1000);
 }
 

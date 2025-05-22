@@ -1,7 +1,7 @@
 NAME = minishell
 
 SRC = lexer.c shell.c tools_fun_0.c syntax.c expand.c tools_fun_1.c copy_env.c \
-		rediraction.c  split_word.c ft_splite.c \
+		rediraction.c  split_word.c ft_splite.c   \
 		../execution/execution.c ../execution/gc_malloc.c  ../execution/execution_tools.c ../execution/ft_strjoin.c ../execution/signal/signal.c \
 		../execution/ft_sp_lit.c ../execution/builtins/env.c  ../execution/builtins/pwd.c ../execution/builtins/export.c \
 		../execution/builtins/unset.c ../execution/builtins/cd.c ../execution/builtins/echo.c ../execution/builtins/exit.c

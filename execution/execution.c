@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/16 22:35:44 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/21 21:38:46 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char *find_path(char *argv, char **ev)
 	i = 0;
 	while (ev[i] && ft_strnstr(ev[i], "PATH=", 5) == NULL)
 		i++;
-	if (!ev[i])
+	if (!ev[i] || !argv || !argv[0])
 		return (NULL);
 	paths = ft_sp_lit(ev[i] + 5, ':');
      
@@ -179,7 +179,7 @@ bool is_cmd_buitin(char *argv)
     return (false);
 }
 
-int execute_builtin(char **argv, t_data *data)
+int execute_builtin(char **argv, t_data *data, t_toke *start)
 {
     if (ft_strcmp(argv[0], "env") == 0)
     {
@@ -205,11 +205,11 @@ int execute_builtin(char **argv, t_data *data)
     }
     else if (ft_strcmp(argv[0], "echo") == 0)
     {
-        return (handle_echo(data->token));
+        return (handle_echo(start));
     }
     else if (ft_strcmp(argv[0], "exit") == 0)
     {
-        return (handle_exit(data->token));
+        return(handle_exit(data->token, start));
     }
     return (0);
 }
@@ -219,25 +219,22 @@ int get_the_redirections(t_toke *start)
     t_toke *curr;
     
     curr = start;
+
+    //echo hello | < /dev/stdin cat
+    //echo hello > /dev/stdout | echo hi  in >>  in the pipe only 
     while (curr && curr->type != PIPE)
     {
         if (curr->type == REDIR_IN || curr->type == HEREDOC)
         {
             if (curr->fd == -1)
-            {
-                perror(curr->next->str);
                 return (-1);   
-            }
             dup2(curr->fd, STDIN_FILENO);
             close(curr->fd);
         }
         else if (curr->type == REDIR_OUT || curr->type == APPEND)
         {
             if (curr->fd == -1)
-            {
-                perror(curr->next->str);
                 return (-1);
-            }
             dup2(curr->fd, STDOUT_FILENO);
             close(curr->fd);
         }
@@ -259,9 +256,8 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     {
         exit(1);
     }
-//     if (data->redirection_failed)
-//        exit(1);
-    
+    //     if (data->redirection_failed)
+    //        exit(1);
     argv = build_argv(start, end);
     // for (int i = 0; argv[i]; i++)
     //     printf("{%s }the argv storge \n", argv[i]);
@@ -272,7 +268,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     }
     if (is_cmd_buitin(argv[0]))
     {
-        data->last_exit_status = execute_builtin(argv, data);
+        data->last_exit_status = execute_builtin(argv, data, start);
         free(argv);
         return;
     }
@@ -317,7 +313,7 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
 
 int is_single_builtin_cmd(t_toke *start, t_toke *end)
 {
-    // Make sure there's no pipe in this segment
+    
     t_toke *curr = start;
     while (curr && curr != end->next)
     {
@@ -325,7 +321,7 @@ int is_single_builtin_cmd(t_toke *start, t_toke *end)
             return 0;
         curr = curr->next;
     }
-    // It is a single command — check if it's a builtin
+    
     if (start && is_cmd_buitin(start->str) &&
         (ft_strcmp(start->str, "cd") == 0 ||
          ft_strcmp(start->str, "export") == 0 ||
@@ -356,11 +352,10 @@ void execute_cmds(t_data *data)
                 perror("pipe failed");
                 return;
             }
-            if (is_single_builtin_cmd(cmd_start, curr))
+            if (is_single_builtin_cmd(cmd_start, curr) && curr->type != PIPE)
             {
-                // data->last_exit_status = execute_builtin(&cmd_start->str, data);
-                char **argv = build_argv(cmd_start, curr);
-                data->last_exit_status = execute_builtin(argv, data);
+                printf("hnaaaaaa\n");
+                data->last_exit_status = execute_builtin(&cmd_start->str, data, cmd_start);
                 return;
             }
             pid = fork();
@@ -377,7 +372,9 @@ void execute_cmds(t_data *data)
                     dup2(p_fds[1], STDOUT_FILENO);
                     close(p_fds[1]);
                 }
-                execute_cmd(data, cmd_start, curr);
+                t_toke *cmd_end = (curr->type == PIPE) ? curr->prev : curr;
+                execute_cmd(data, cmd_start, cmd_end);
+                //execute_cmd(data, cmd_start, curr,);
                 // printf("{%s} {%s}\n", curr->str ,cmd_start->str);
                 exit(data->last_exit_status);
             }
@@ -397,6 +394,6 @@ void execute_cmds(t_data *data)
         }
         curr = curr->next;
     }
-    
     while (waitpid(-1, NULL, 0) > 0);
+    // return (data->last_exit_status);
 }

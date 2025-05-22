@@ -1,7 +1,7 @@
 #include "../../parsing/mini_shell.h"
 
 
-void	update_var(t_copy **env, char *key, char *value, int append)
+void	update_var(t_copy **env, char *key, char *value, int append, int egal)
 {
 	t_copy	*cur;
 	char *new_val;
@@ -16,11 +16,14 @@ void	update_var(t_copy **env, char *key, char *value, int append)
 				new_val = ft_strjoin(cur->value, value + 1);
 				cur->value = new_val;
 			}
-			else
+			else if (!egal)
 			{
-				free(cur->value);
+				if (!*value)
+					return ;
 				cur->value = ft_strdup(value);
 			}
+			else
+				cur->value = ft_strdup(value);
 			return;
 		}
 		cur = cur->next;
@@ -39,7 +42,7 @@ void print_export(t_data *data)
 		while (tmp)
 		{
 			if (tmp->key[0] == c)
-				printf("%s %s=%s\n", "declare -x", tmp->key, tmp->value);
+				printf("%s %s=\"%s\"\n", "declare -x", tmp->key, tmp->value);
 			tmp = tmp->next;
 		}
 		c++;
@@ -51,10 +54,22 @@ void print_export(t_data *data)
 		while (tmp)
 		{
 			if (tmp->key[0] == c)
-				printf("%s %s=%s\n", "declare -x", tmp->key, tmp->value);
+				printf("%s %s=\"%s\"\n", "declare -x", tmp->key, tmp->value);
 			tmp = tmp->next;
 		}
 		c++;
+	}
+	tmp = data->copy_env;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, "_"))
+		{
+			tmp = tmp->next;
+			continue;
+		}
+		if (tmp->key[0] == '_')
+			printf("%s %s=\"%s\"\n", "declare -x", tmp->key, tmp->value);
+		tmp = tmp->next;
 	}
 }
 
@@ -63,7 +78,8 @@ int handle_export(t_data *data)
 	t_toke *tmp;
 	int j;
 	int k = 0;
-	int append = 0;
+	int append;
+	int egal;
 	char *key;
 	char *value;
 
@@ -76,17 +92,20 @@ int handle_export(t_data *data)
 			{
 				k++;
 				j = 0;
-				if (!((tmp->next->str[j] >= 'a' && tmp->next->str[j] <= 'z') || (tmp->next->str[j] >= 'A' && tmp->next->str[j] <= 'Z')))
+				egal = 0;
+				append = 0;
+				if (!((tmp->next->str[j] >= 'a' && tmp->next->str[j] <= 'z') || (tmp->next->str[j] >= 'A' && tmp->next->str[j] <= 'Z') || tmp->next->str[j] == '_'))
 				{
 					printf("minishell: export: `%s': not a valid identifier\n", tmp->next->str);
-					return (0);	
+					tmp->next = tmp->next->next;
+					continue ;	
 				}
 				while (tmp->next->str[j] && tmp->next->str[j] != '=')
             	{
 					if (tmp->next->str[j] == '+' && tmp->next->str[j + 1] == '+')
 					{
 						printf("minishell: export: `%s': not a valid identifier\n", tmp->next->str);
-						return (0);
+						break ;
 					}
 	        	    if (tmp->next->str[j] == '+' && tmp->next->str[j + 1] == '=')
 	        	    {
@@ -95,13 +114,20 @@ int handle_export(t_data *data)
 	        	    }
 	        	    j++;
             	}
+				if (tmp->next->str[j] == '+' && tmp->next->str[j + 1] == '+')
+				{
+					tmp->next = tmp->next->next;
+					continue ;					
+				}
+				if (tmp->next->str[j] == '=')
+					egal = 1;
 				key = ft_substr(tmp->next->str, 0, j);
 				if (!key)
 					return (1);
 				value = ft_substr(tmp->next->str, j + 1, ft_strlen(tmp->next->str) - j);
 				if (!value)
 					return (free(key), 1);
-				update_var(&data->copy_env, key, value, append);
+				update_var(&data->copy_env, key, value, append, egal);
 				free(key);
 				free(value);
 				tmp->next = tmp->next->next;
