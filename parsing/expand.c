@@ -18,7 +18,9 @@ char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 		(*i)++;
 		if (checker == 2)
 			return (ft_strdup("2"));
-		return (ft_strdup("0"));
+		else if (checker == 127)
+			return (ft_strdup("127"));
+		return (ft_strdup(ft_itoa(checker)));
 	}
 	if (str && (ft_isdigit(str[*i]) || str[*i] == '$'))
 	{
@@ -67,6 +69,8 @@ void expandd(t_toke *head, t_copy *copy, int checker)
 			tmp = tmp->next;
 			if (!tmp)
 				break ;
+			if (!ft_strcmp(tmp->str, "$"))
+				tmp->str = ft_strdup("");
 		}
 		else if ((tmp->type == WORD || tmp->type == DB_QT) && ft_strchr(tmp->str, '$'))
 		{

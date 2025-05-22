@@ -88,6 +88,7 @@ t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
 void	handle_file(t_data *data);
 char	**ft_split(char const *s, char c);
+char	*ft_itoa(int n);
 void	split_word(t_toke *toke);
 char	*expnand_it(char *str, t_copy *copy, int checker);
 
@@ -102,7 +103,7 @@ void	handle_unset(t_toke *toke, t_copy **copy);
 int 	handle_cd(char **argv, t_data *data);
 char *get_the_pathe(t_copy *copy_env, char *str);
 int handle_echo(t_toke *start);
-int handle_exit(t_toke *start);
+int handle_exit(t_toke *tokns, t_toke *start);
 
 
 // end buitlins function !!!!!

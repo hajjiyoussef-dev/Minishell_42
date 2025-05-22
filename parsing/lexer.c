@@ -28,9 +28,7 @@ void add_token(t_toke **list, t_toke *new_token)
 	{
 		tmp = *list;
 		while (tmp->next)
-		{
 			tmp = tmp->next;
-		}
 		tmp->next = new_token;
 		new_token->prev = tmp;
 	}

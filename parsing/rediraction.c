@@ -12,22 +12,22 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 {
 	int fd;
 	int w_fd;
-	static int iF;
+	static int file;
+	static int Fh;
 	char *path;
 	char *line;
 
+	if (file == 16)
+		return(printf("%s\n", "minishell: maximum here-document count exceeded"), exit(2), 1);
 	data->redirection_failed = 0;
-	// while (!access(path, F_OK))
-	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(iF++));
-	// falg dyal write lah n3al tabon mook rah fat7 file bla falg bash tktab fih zamal !!!!!!!!!!1!
-	// (!)
-	// ||
-	// || // hak zob !!!
-	// ||
-   // ()()
+	while (!access(path, F_OK))
+		Fh++;
+	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh++));
 	w_fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (w_fd < 0)
 		return (printf("minishell : heredoc error\n"), data->redirection_failed = 1, -1);
+	if (w_fd >= 0)
+		file++;
 	while (1)
 	{
 		line = NULL;
@@ -35,7 +35,12 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 			line = readline("PIPE heredoc> ");
 		else
 			line = readline("heredoc> ");
-		if (!line || !ft_strcmp(toke->next->str, line))
+		if (!line)
+		{
+			printf("minishell: warning: here-document at delimited by end-of-file (wanted `%s')\n", toke->next->str);
+			break ;
+		}
+		if (!ft_strcmp(toke->next->str, line))
 		{
 			free(line);
 			break ;
@@ -68,12 +73,17 @@ void	handle_file(t_data *data)
 		{
 			if (flag)
 			{
+				if (!*tmp->next->str  && tmp->next->type == WORD)
+				{
+					printf("minishell: ambiguous redirect\n");
+					flag = 0;
+					continue ;
+				}
 				tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
 				if (tmp->fd < 0)
 				{
 					flag = 0;
 					printf("minishell : %s Permission denied\n", tmp->next->str);
-					data->redirection_failed = 1;
 				}
 			}
 		}
@@ -81,6 +91,12 @@ void	handle_file(t_data *data)
 		{
 			if (flag)
 			{
+				if (!*tmp->next->str  && tmp->next->type == WORD)
+				{
+					printf("minishell: ambiguous redirect\n");
+					flag = 0;
+					continue ;
+				}
 				tmp->fd = open(tmp->next->str, O_RDONLY);
 				if (tmp->fd < 0)
 				{
@@ -94,6 +110,12 @@ void	handle_file(t_data *data)
 		{
 			if (flag)
 			{
+				if (!*tmp->next->str  && tmp->next->type == WORD)
+				{
+					printf("minishell: ambiguous redirect\n");
+					flag = 0;
+					continue ;
+				}
 				tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (tmp->fd < 0)
 				{
