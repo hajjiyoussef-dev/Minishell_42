@@ -24,6 +24,10 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 		Fh++;
 	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh++));
 	w_fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+
+	// while (!access(path, F_OK))
+	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(file++));
+	w_fd = open(path, O_CREAT | O_TRUNC, 0644);
 	if (w_fd < 0)
 		return (printf("minishell : heredoc error\n"), data->redirection_failed = 1, -1);
 	if (w_fd >= 0)
