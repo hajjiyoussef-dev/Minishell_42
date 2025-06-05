@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 19:02:30 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/07 20:33:06 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/29 17:49:19 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_str_dup2(const char *s1)
 	i = 0;
 	if (!s1)
 		return (NULL);
-	ptr = malloc(sizeof(char) * (ft_str_len(s1) + 1));
+	ptr = gc_malloc(sizeof(char) * (ft_str_len(s1) + 1), 1);
 	if (!ptr)
 		return (NULL);
 	while (s1[i])
@@ -63,9 +63,9 @@ char	*ft_str_join(char *s1, char *s2)
 	if (!s2)
 		return (ft_str_dup2(s1));
 	lens = ft_str_len(s1) + ft_str_len(s2);
-	str = (char *)malloc(lens + 1);
+	str = (char *)gc_malloc(lens + 1, 1);
 	if (!str)
-		return (free(s1), NULL);
+		return (NULL);
 	while (s1[j] != '\0')
 		str[i++] = s1[j++];
 	j = 0;

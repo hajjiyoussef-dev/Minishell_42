@@ -35,7 +35,7 @@ static char	*ft_str_dup(char const *str, int size)
 	char	*arr;
 
 	i = 0;
-	arr = malloc(size + 1);
+	arr = gc_malloc(size + 1, 1);
 	if (!arr)
 		return (NULL);
 	while (str[i] && i < size)
@@ -82,7 +82,7 @@ char	**ft_split(char const *s, char c)
 
 	if (!s)
 		return (NULL);
-	result = malloc((count_word(s, c) + 1) * sizeof(char *));
+	result = gc_malloc((count_word(s, c) + 1) * sizeof(char *), 1);
 	if (!result)
 		return (NULL);
 	return (extract_word(s, c, result));

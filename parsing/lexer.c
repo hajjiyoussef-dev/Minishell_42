@@ -4,10 +4,13 @@ t_toke *create_token(char *str, t_type type, char spc_aftr)
 {
 	t_toke *new_toke;
 
-	new_toke = malloc(sizeof(t_toke));
+	new_toke = gc_malloc(sizeof(t_toke), 1);
 	if (!new_toke)
 		return (NULL);
-	new_toke->str = ft_strdup(str);
+	if (type == WORD || type == DB_QT || type == SNL_QT)
+		new_toke->str = str;
+	else
+		new_toke->str = ft_strdup(str);
 	new_toke->type = type;
 	if (spc_aftr == ' ')
 		new_toke->space_after = 1;
@@ -49,7 +52,7 @@ char *copy_word(char *line, int *i)
 		else
 			break ;
 	}
-	word = malloc((*i - start) + 1);
+	word = gc_malloc((*i - start) + 1, 1);
     if (!word)
 		return (NULL);
 	j = 0;
@@ -64,45 +67,44 @@ char *copy_quoted_word(char *line, int *i)
     char    *result;
     int     start;
     char    quote;
+	int     t;
 
     quote = line[*i];
     (*i)++;
     start = *i;
     while (line[*i] && line[*i] != quote)
         (*i)++;
-    result = ft_substr(line, start, *i - start);
-    // if (line[*i] == quote)
-    //     (*i)++;
+    t = 0;
+    result = gc_malloc((*i - start) + 1, 1);
+    if (!result)
+        return (NULL);
+    while (t < (*i - start) && line[start + t])
+    {
+        result[t] = line[start + t];
+        t++;
+    }
+    result[t] = '\0';
     return (result);
 }
-int	help_concatinate(t_type type)
-{
-	if (type == WORD || type == DB_QT || type == SNL_QT)
-		return (1);
-	return (0);
-}
-t_toke	*concatinate(t_toke *head)
-{
-	t_toke	*tmp;
-	t_toke	*nxt;
 
-	tmp = head;
-	while (tmp && tmp->next)
+
+t_toke *lexer(char *line)
+{
+	int i = 0;
+	t_toke *list = NULL;
+
+	while (line[i])
 	{
-		nxt = tmp->next;
-		while (nxt && help_concatinate(nxt->type) && help_concatinate(tmp->type)
-				&& !tmp->space_after)
-		{
-			tmp->str = ft_strjoin(tmp->str, nxt->str);
-			if (nxt && nxt->space_after)
-			{
-				nxt = nxt->next;
-				break ;
-			}
-			nxt = nxt->next;
-		}
-		tmp->next = nxt;
-		tmp = tmp->next;
+		if (handle_space(line, &i))
+			continue;
+		else if (handle_pipe(line, &i, &list))
+			continue;
+		else if (handle_quotes(line, &i, &list))
+			continue;
+		else if (handle_redirections(line, &i, &list))
+			continue;
+		else
+			handle_word(line, &i, &list);
 	}
-	return (head);
+	return (list);
 }

@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:47:13 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/21 21:30:59 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/01 20:17:22 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,75 +87,91 @@ bool	ft_is_numeric(const char *str)
 }
 
 
-int handle_exit(t_toke *tokns, t_toke *start)
+int handle_exit(t_toke *tokns, t_toke *start, t_data *data)
 {
 	t_toke *curr = tokns;
 	int exit_code = 0;
 	bool overflow;
+	bool flag = false;
 
 	overflow = false;
-	while (curr && curr->next != NULL)
+	while (curr)
+    {
+        if (curr->type == PIPE)
+            flag = true;
+        curr = curr->next;
+    }
+	curr = start;
+	if (flag == true)
 	{
-		if (curr->type  == PIPE && (ft_strcmp(curr->next->str, "exit") == 0))
+		while (curr && curr->next != NULL && curr->next->type != PIPE)
 		{
-			if (curr->next != NULL)
+			if ((ft_strcmp(curr->str, "exit") == 0) && curr->next->type != PIPE)
 			{
-				if (curr->next->next != NULL)
+				if (curr->next->next != NULL && curr->next->next->type != PIPE)
 				{
-					if (!ft_is_numeric(curr->next->next->str))
-					{
-						ft_putendl_fd("exit", STDERR_FILENO);
-						ft_putstr_fd("bash: ", STDERR_FILENO);
-						ft_putstr_fd(curr->next->str, STDERR_FILENO);
-						ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-						return (2);
-					}
-					
+					write(2, "bash: exit: too many arguments\n", 32);
+					return (1);
 				}
-				if (curr->next->next)
+				if (curr->next != NULL && curr->next->type != PIPE)
 				{
-					exit_code = ft_atoi2(curr->next->next->str, &overflow);
-					if (overflow == true)
+					exit_code = ft_atoi2(curr->next->str, &overflow);
+					if (!ft_is_numeric(curr->next->str) || overflow == true)
 					{
-						ft_putendl_fd("exit", STDERR_FILENO);
-						ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-						// ft_putstr_fd(curr->next->next->str, STDERR_FILENO);
-						ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+						write(2, "bash: ", 7);
+						ft_putstr_fd(curr->next->str, STDERR_FILENO);
+						write(2, ": numeric argument required\n", 29);
 						return (2);
 					}
 					return(exit_code);
 				}
+				return (0);
 			}
-			return (0);
+			curr = curr->next;
 		}
-		curr = curr->next;
+		return (2);
 	}
-	curr = start->next;
-	if (!curr)
+	else if (flag == false)
 	{
-		fprintf(stderr, "[debug] curr is NULL → exit\n");
+		curr = start->next;
+		if (!curr)
+		{
+			ft_putstr_fd("exit\n", STDOUT_FILENO);
+			gc_malloc(0, 0);
+			exit(0);
+		}
+		if (curr->next != NULL)
+		{
+			ft_putendl_fd("exit", STDERR_FILENO);
+			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
+			ft_putendl_fd("too many arguments", STDERR_FILENO);
+			gc_malloc(0, 0);
+			return (1);
+		}
+		if (!ft_is_numeric(curr->str))
+		{
+			ft_putendl_fd("exit", STDERR_FILENO);
+			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
+			ft_putstr_fd(curr->str, STDERR_FILENO);
+			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+			gc_malloc(0, 0);
+			exit(2);
+		}
+		exit_code = ft_atoi2(curr->str, &overflow);
+		if (overflow == true)
+		{
+			ft_putendl_fd("exit", STDERR_FILENO);
+			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
+			ft_putstr_fd(curr->str, STDERR_FILENO);
+			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+			gc_malloc(0, 0);
+			exit(2);
+		}	
 		ft_putstr_fd("exit\n", STDOUT_FILENO);
-		exit(0);
+		data->last_exit_status = (exit_code % 256);
+		gc_malloc(0, 0);
+		exit(exit_code % 256);
 	}
-	if (!ft_is_numeric(curr->str))
-	{
-		ft_putendl_fd("exit", STDERR_FILENO);
-		ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-		ft_putstr_fd(curr->str, STDERR_FILENO);
-		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-		exit(2);
-	}
-
-
-	exit_code = ft_atoi2(curr->str, &overflow);
-	if (overflow == true)
-	{
-		ft_putendl_fd("exit", STDERR_FILENO);
-		ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-		ft_putstr_fd(curr->str, STDERR_FILENO);
-		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-		exit(2);
-	}	
-	ft_putstr_fd("exit\n", STDOUT_FILENO);
-	exit(exit_code % 256);
+	return (0);
 }
+

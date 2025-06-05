@@ -13,7 +13,13 @@ void handle_env(t_toke *toke, t_copy *copy)
             tmp_1 = copy;
             while (tmp_1)
             {
-                printf("%s=%s\n", tmp_1->key, tmp_1->value);
+                if (!ft_strcmp(tmp_1->key, "secret_pwd="))
+                {
+                    tmp_1 = tmp_1->next;
+                    continue ;
+                }
+                if (ft_strchr(tmp_1->key, '='))
+                    printf("%s%s\n", tmp_1->key, tmp_1->value);
                 tmp_1 = tmp_1->next;
             }
         }

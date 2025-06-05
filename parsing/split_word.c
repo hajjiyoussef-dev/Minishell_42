@@ -23,7 +23,7 @@ t_toke *new(char *str, t_type type, int flag)
 {
 	t_toke *new_toke;
 
-	new_toke = malloc(sizeof(t_toke));
+	new_toke = gc_malloc(sizeof(t_toke), 1);
 	if (!new_toke)
 		return (NULL);
 	new_toke->str = ft_strdup(str);
@@ -34,9 +34,9 @@ t_toke *new(char *str, t_type type, int flag)
 	return (new_toke);
 }
 
-void add_node(t_toke *toke, char **str, int count)
+void add_node(t_toke **toke, char **str, int count)
 {
-    t_toke *tmp = toke;
+    t_toke *tmp = *toke;
     t_toke *after;
     int i = 0;
     int space;
@@ -46,7 +46,6 @@ void add_node(t_toke *toke, char **str, int count)
     if (!tmp || !str || !str[0])
         return;
     after = tmp->next; 
-    free(tmp->str);
     space = tmp->space_after;
     tmp->str = ft_strdup(str[0]);
     tmp->space_after = 1;
@@ -61,18 +60,53 @@ void add_node(t_toke *toke, char **str, int count)
         i++;
     }
     tmp->next = after;
-    i = 0;
-    while (str[i])
-        free(str[i++]);
-    free(str);
 }
 
-void split_word(t_toke *toke)
+void skip_doll(t_toke **toke)
 {
-    t_toke *tmp = toke;
+    t_toke *tmp = *toke;
+    t_toke *prev = NULL;
+
+    while (tmp && tmp->next)
+    {
+        if (tmp->type == WORD && !tmp->space_after
+            && !ft_strcmp(tmp->str, "$")
+            && (tmp->next->type == DB_QT || tmp->next->type == SNL_QT))
+        {
+            if (!prev)
+                *toke = tmp->next;
+            else
+                prev->next = tmp->next;
+            tmp = tmp->next;
+            continue;
+        }
+        prev = tmp;
+        tmp = tmp->next;
+    }
+}
+
+void ambiguous(t_toke **toke)
+{
+    t_toke *tmp = *toke;
+
+    while (tmp)
+    {
+        if (is_spc(tmp->str))
+            tmp->is_spc = 1;
+        else
+            tmp->is_spc = 0;
+        tmp = tmp->next;
+    }  
+}
+
+void split_word(t_toke **toke)
+{
+    t_toke *tmp = *toke;
     char **split;
     int i = 0;
 
+    skip_doll(toke);
+    ambiguous(toke);
     while (tmp)
     {
         if (tmp->type == WORD && is_spc(tmp->str))
@@ -81,7 +115,7 @@ void split_word(t_toke *toke)
             if (split)
             {
                 add_node(toke, split, i);
-                tmp = toke;
+                tmp = *toke;
                 i = 0;
                 continue ;
             }

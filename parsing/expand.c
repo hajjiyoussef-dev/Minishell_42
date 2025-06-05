@@ -13,13 +13,10 @@ int	ft_isalnum(char c)
 char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 {
 	char	*to_search = NULL;
+
 	if (str && str[*i] == '?')
 	{
 		(*i)++;
-		if (checker == 2)
-			return (ft_strdup("2"));
-		else if (checker == 127)
-			return (ft_strdup("127"));
 		return (ft_strdup(ft_itoa(checker)));
 	}
 	if (str && (ft_isdigit(str[*i]) || str[*i] == '$'))
@@ -38,7 +35,7 @@ char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 
 char	*expnand_it(char *str, t_copy *copy, int checker)
 {
-	char	*res = NULL;
+	char	*res = ft_strdup("");
 	int		i = 0;
 
 	while (str[i])
@@ -57,25 +54,46 @@ char	*expnand_it(char *str, t_copy *copy, int checker)
 	return (res);
 }
 
-void expandd(t_toke *head, t_copy *copy, int checker)
+void	expand_heredoc(t_toke **tmp)
 {
-	t_toke *tmp;
+	t_toke	*prev;
+
+	*tmp = (*tmp)->next;
+	prev = *tmp;
+	if (!*tmp)
+		return ;
+	if (!(*tmp)->next)
+		return ;
+	if (!ft_strcmp((*tmp)->str, "$"))
+	{
+		if (!(*tmp)->space_after && (*tmp)->next)
+			(*tmp)->str = ft_strdup("");
+		else
+			(*tmp)->str = ft_strdup("$");
+	}
+	while (*tmp && !(*tmp)->space_after)
+	{
+		*tmp = (*tmp)->next;
+		prev->type = DB_QT;
+	}
+}
+
+void	expandd(t_toke *head, t_copy *copy, int checker)
+{
+	t_toke	*tmp;
 
 	tmp = head;
 	while (tmp)
 	{
 		if (tmp->type == HEREDOC)
 		{
-			tmp = tmp->next;
+			expand_heredoc(&tmp);
 			if (!tmp)
 				break ;
-			if (!ft_strcmp(tmp->str, "$"))
-				tmp->str = ft_strdup("");
 		}
-		else if ((tmp->type == WORD || tmp->type == DB_QT) && ft_strchr(tmp->str, '$'))
-		{
+		else if ((tmp->type == WORD || tmp->type == DB_QT)
+			&& ft_strchr(tmp->str, '$'))
 			tmp->str = expnand_it(tmp->str, copy, checker);
-		}
 		tmp = tmp->next;
 	}
 }

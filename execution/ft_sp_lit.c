@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   ft_sp_lit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 06:45:23 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/07 20:52:29 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/29 16:46:59 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static char	*ft_str_dup(const char *s1, int size)
 	int		i;
 
 	i = 0;
-	ptr = (char *)malloc((size + 1) * sizeof(char));
+	ptr = gc_malloc((size + 1) * sizeof(char), 1);
 	if (!ptr)
 		return (NULL);
 	while (s1[i] && i < size)
@@ -95,7 +95,7 @@ char	**ft_sp_lit(char const *s, char c)
 
 	if (!s)
 		return (NULL);
-	string = (char **)malloc((count_word(s, c) + 1) * sizeof(char *));
+	string = gc_malloc((count_word(s, c) + 1) * sizeof(char *), 1);
 	if (!string)
 		return (NULL);
 	return (help_split(s, c, string));

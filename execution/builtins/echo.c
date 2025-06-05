@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:34:01 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/21 21:45:14 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/01 20:17:54 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,36 +29,55 @@ int handle_echo(t_toke *start)
 {
 	t_toke *curr;
 	bool is_opten;
-	
+	bool first_arg_printed = false;
+
 	curr = start;
-	is_opten = false;
-	
-	// case of < 1 echo hello !!! 
 	while (curr && (curr->type == REDIR_IN || curr->type == REDIR_OUT || curr->type == APPEND || curr->type == HEREDOC))
 	{
 		if (curr->next)
 			curr = curr->next->next;
-		// else
-		// 	return (1); 
+		else
+			return (1); 
 	}
-
 	if (curr && ft_strcmp(curr->str, "echo") == 0)
 		curr = curr->next;
-
-	while (curr && is_op_n(curr->str))
+	while (curr)
 	{
-		is_opten = true;
-		curr = curr->next;
+		if (curr->type == REDIR_IN || curr->type == REDIR_OUT || curr->type == APPEND || curr->type == HEREDOC)
+		{
+			if (curr->next)
+				curr = curr->next->next;
+			else
+				break;
+			continue;
+		}
+		if (is_op_n(curr->str))
+		{
+			is_opten = true;
+			curr = curr->next;
+		}
+		else
+			break;
 	}
-	
-	while (curr  && curr->type != PIPE && curr->type != REDIR_OUT && curr->type != REDIR_IN && curr->type != HEREDOC && curr->type != APPEND)
+	while (curr && curr->type != PIPE)
 	{
-		ft_putstr_fd(curr->str, STDOUT_FILENO);
-		curr = curr->next;
-		if (curr  && curr->type != PIPE && curr->type != REDIR_OUT && curr->type != REDIR_IN && curr->type != HEREDOC && curr->type != APPEND )
+		if (curr->type == REDIR_OUT || curr->type == REDIR_IN || curr->type == HEREDOC || curr->type == APPEND)
+		{
+			if (curr->next)
+				curr = curr->next->next;
+			else
+				break;
+			continue;
+		}
+		if (first_arg_printed)
 			ft_putstr_fd(" ", STDOUT_FILENO);
+
+		ft_putstr_fd(curr->str, STDOUT_FILENO);
+		first_arg_printed = true;
+		curr = curr->next;
 	}
 	if (!is_opten)
-		ft_putstr_fd("\n", 1);
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (0);
 }
+

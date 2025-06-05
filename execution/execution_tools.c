@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 04:35:06 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/11 00:26:24 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/05/22 19:11:43 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void ft_putstr_fd(char *str, int fd)
 		write(fd, &str[i], 1);
 		i++;
 	}
+	
 }
 
 void ft_putendl_fd(char *str, int fd)

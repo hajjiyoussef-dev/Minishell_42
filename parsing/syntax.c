@@ -14,19 +14,26 @@ int is_redrict(t_type type)
     return (0);
 }
 
+
+int is_valid_file_token(t_type type)
+{
+	if(type == WORD || type == DB_QT || type == SNL_QT)
+		return (1);
+	return (0);
+}
+
 int	check_syntax(t_toke *tokens)
 {
 	t_toke *cur = tokens;
 	if (!cur)
 		return (0);
-
 	if (cur->type == PIPE)
 		return (print_error("|"));
 	while (cur)
 	{
 		if (cur->type == PIPE && (!cur->next || cur->next->type == PIPE))
 			return (print_error("|"));
-        if (is_redrict(cur->type) && (!cur->next || (cur->next->type != WORD && cur->next->type != DB_QT && cur->next->type != SNL_QT)))
+		if (is_redrict(cur->type) && (!cur->next || !is_valid_file_token(cur->next->type)))
 		{
 			if (!cur->next)
 				return (print_error("newline"));

@@ -1,44 +1,106 @@
 #include "mini_shell.h"
 
-char	*expand_line(char *line, t_data *data)
+char *get_key(char *str, t_copy *copy)
 {
-	if (ft_strchr(line, '$'))
-		line = expnand_it(line, data->copy_env, data->last_exit_status);
-	return(line);
+	t_copy *tmp;
+	char *join;
+
+	tmp = copy;
+	join = ft_strjoin(str, "=");
+	while (tmp && str)
+	{
+		if(ft_strcmp(tmp->key, join) == 0)
+			return(ft_strdup(tmp->value));
+		tmp = tmp->next;
+	}
+	return (ft_strdup(""));
+}
+
+char *get_var(char *str, int *i, t_copy *copy, int checker)
+{
+	char	*to_search = NULL;
+	char	*search = NULL;
+	if (str && str[*i] == '?')
+	{
+		(*i)++;
+		return (ft_strdup(ft_itoa(checker)));
+	}
+	if (str && str[*i] == '$')
+	{
+		(*i)++;
+		return (ft_strdup(""));
+	}
+	while (str && str[*i] && ft_isalnum(str[*i]))
+	{
+		to_search = ft_joinchar(to_search, str[*i]);
+		(*i)++;
+	}
+	search = get_key(to_search, copy);
+	return (search);
 }
 
 
-int handle_heredoc(t_toke *toke, int flag, t_data *data)
+char	*expnand(char *str, t_copy *copy, int checker)
+{
+	char	*res = NULL;
+	char	*join;
+	int		i = 0;
+
+	while (str[i])
+	{
+		if (str[i] == '$' && str[i+1])
+		{
+			i++;
+			join = get_var(str, &i, copy, checker);
+			res = ft_strjoin(res, join);
+		}
+		else
+		{
+			res = ft_joinchar(res, str[i]);
+			i++;
+		}
+	}
+	return (res);
+}
+
+char	*expand_line(char *line, t_data *data)
+{
+	if (ft_strchr(line, '$'))
+		line = expnand(line, data->copy_env, data->last_exit_status);
+	return(line);
+}
+
+int handle_heredoc(t_toke *toke, t_data *data)
 {
 	int fd;
 	int w_fd;
-	static int file;
 	static int Fh;
 	char *path;
+	char *tmp;
 	char *line;
+	int u;
 
-	if (file == 16)
-		return(printf("%s\n", "minishell: maximum here-document count exceeded"), exit(2), 1);
-	data->redirection_failed = 0;
+	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh));
 	while (!access(path, F_OK))
+	{
 		Fh++;
-	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh++));
+		path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh));
+	}
 	w_fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-
-	// while (!access(path, F_OK))
-	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(file++));
-	w_fd = open(path, O_CREAT | O_TRUNC, 0644);
 	if (w_fd < 0)
-		return (printf("minishell : heredoc error\n"), data->redirection_failed = 1, -1);
-	if (w_fd >= 0)
-		file++;
+		return (printf("minishell : heredoc error\n"), -1);
+	g_sig = 222;
 	while (1)
 	{
+		u = 0;
 		line = NULL;
-		if (flag == 2)
-			line = readline("PIPE heredoc> ");
-		else
-			line = readline("heredoc> ");
+		line = readline("heredoc> ");
+		if (g_sig == 111)
+		{
+			close(w_fd);
+			unlink(path);
+			return (-1337);
+		}
 		if (!line)
 		{
 			printf("minishell: warning: here-document at delimited by end-of-file (wanted `%s')\n", toke->next->str);
@@ -49,11 +111,17 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 			free(line);
 			break ;
 		}
-		if (toke->next->type == WORD)
-			line = expand_line(line, data);
+		if (toke->next->type == WORD && ft_strchr(line, '$'))
+		{
+			tmp = expand_line(line, data);
+			free(line);
+			line = tmp;
+			u = 1;
+		}
 		write(w_fd, line, ft_strlen(line));
 		write(w_fd, "\n", 1);
-		free(line);
+		if (!u)
+			free(line);
 	}
 	close(w_fd);
 	fd = open(path, O_RDONLY);
@@ -61,76 +129,103 @@ int handle_heredoc(t_toke *toke, int flag, t_data *data)
 	return (fd);
 }
 
-void	handle_file(t_data *data)
+static void	handle_redir_in_out(t_toke *tmp, int *flag, t_data *data)
 {
-	t_toke *tmp;
-	int flag = 1;
+	int		mode;
+	char	*msg;
 
+	if (!*flag)
+		return ;
+	if ((!*tmp->next->str && tmp->next->type == WORD) || (tmp->next->is_spc && tmp->next->type == WORD))
+	{
+		printf("minishell: ambiguous redirect\n");
+		*flag = 0;
+		return ;
+	}
+	mode = O_RDONLY;
+	msg = "No such file or directory";
+	if (tmp->type == REDIR_OUT)
+	{
+		mode = O_WRONLY | O_CREAT | O_TRUNC;
+		msg = "Permission denied";
+	}
+	tmp->fd = open(tmp->next->str, mode, 0644);
+	if (tmp->fd < 0)
+	{
+		*flag = 0;
+		printf("minishell : %s %s\n", tmp->next->str, msg);
+	}
+	else
+		add_fd(&data->fd_tracker, tmp->fd);
+}
+
+
+static void	handle_append(t_toke *tmp, int *flag, t_data *data)
+{
+	if (*flag)
+	{
+		if ((!*tmp->next->str && tmp->next->type == WORD) || (tmp->next->is_spc && tmp->next->type == WORD))
+		{
+			printf("minishell: ambiguous redirect\n");
+			*flag = 0;
+			return ;
+		}
+		tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (tmp->fd < 0)
+		{
+			*flag = 0;
+			printf("minishell : %s Permission denied\n", tmp->next->str);
+		}
+	}
+	else 
+		add_fd(&data->fd_tracker, tmp->fd);
+}
+
+int handle_file(t_data *data)
+{
+	t_toke	*tmp;
+	int		flag;
+
+	flag = 1;
 	tmp = data->token;
-	data->redirection_failed = 0;
-
 	while (tmp)
 	{
 		if (tmp->type == PIPE)
 			flag = 2;
 		if (tmp->type == APPEND)
-		{
-			if (flag)
-			{
-				if (!*tmp->next->str  && tmp->next->type == WORD)
-				{
-					printf("minishell: ambiguous redirect\n");
-					flag = 0;
-					continue ;
-				}
-				tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				if (tmp->fd < 0)
-				{
-					flag = 0;
-					printf("minishell : %s Permission denied\n", tmp->next->str);
-				}
-			}
-		}
-		if (tmp->type == REDIR_IN)
-		{
-			if (flag)
-			{
-				if (!*tmp->next->str  && tmp->next->type == WORD)
-				{
-					printf("minishell: ambiguous redirect\n");
-					flag = 0;
-					continue ;
-				}
-				tmp->fd = open(tmp->next->str, O_RDONLY);
-				if (tmp->fd < 0)
-				{
-					flag = 0;
-					printf("minishell : %s No such file or directory\n", tmp->next->str);
-					data->redirection_failed = 1;
-				}
-			}
-		}
-		if (tmp->type == REDIR_OUT)
-		{
-			if (flag)
-			{
-				if (!*tmp->next->str  && tmp->next->type == WORD)
-				{
-					printf("minishell: ambiguous redirect\n");
-					flag = 0;
-					continue ;
-				}
-				tmp->fd = open(tmp->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				if (tmp->fd < 0)
-				{
-					flag = 0;
-					printf("minshell : %s Permission denied\n", tmp->next->str);
-					data->redirection_failed = 1;
-				}
-			}
-		}
+			handle_append(tmp, &flag, data);
+		if (tmp->type == REDIR_IN || tmp->type == REDIR_OUT)
+			handle_redir_in_out(tmp, &flag, data);
 		if (tmp->type == HEREDOC)
-			tmp->fd = handle_heredoc(tmp, flag, data);
+		{
+			tmp->fd = handle_heredoc(tmp, data);
+			if (tmp->fd == -1337)
+			{
+				data->last_exit_status = 130;
+				return (-1337);
+			}
+		}
 		tmp = tmp->next;
 	}
+	return (0);
+}
+
+
+int check_her_doc(t_toke *toke)
+{
+	t_toke *tmp;
+	int count;
+
+	tmp = toke;
+	count = 0;
+	while (tmp)
+	{
+		if (tmp->type == HEREDOC)
+			count += 1;
+		tmp = tmp->next;	
+	}
+	if (count > 16)
+		return (1);
+	return (0);
+	
 }

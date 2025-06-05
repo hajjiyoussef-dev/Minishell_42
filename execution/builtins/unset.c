@@ -4,18 +4,19 @@ void	remove_var(t_copy **copy, char *key)
 {
 	t_copy	*cur;
 	t_copy	*prev;
+	char 	*join;
 
 	cur = *copy;
 	prev = NULL;
+	join = ft_strjoin(key, "=");
 	while (cur)
 	{
-		if (!ft_strcmp(cur->key, key))
+		if (!ft_strcmp(cur->key, key) || !ft_strcmp(cur->key, join))
 		{
 			if (!prev)
 				*copy = cur->next;
 			else
 				prev->next = cur->next;
-			free(cur);
 			break;
 		}
 		prev = cur;
@@ -23,20 +24,24 @@ void	remove_var(t_copy **copy, char *key)
 	}
 }
 
-void	handle_unset(t_toke *toke, t_copy **copy)
+int	handle_unset(t_toke *toke, t_copy **copy)
 {
 	t_toke	*tmp;
-	t_toke *arg;
+	t_toke	*arg;
 
 	tmp = toke;
-
 	while (tmp)
 	{
 		if (!ft_strcmp("unset", tmp->str) && tmp->next)
 		{
 			arg = tmp->next;
-			while (arg && arg->type == WORD)
+			while (arg && (arg->type == WORD || arg->type ==  DB_QT || arg->type == SNL_QT))
 			{
+				if (!ft_strcmp(arg->str, "_") || !ft_strcmp(arg->str, "secret_pwd"))
+				{
+					arg = arg->next;
+					continue;
+				}
 				remove_var(copy, arg->str);
 				arg = arg->next;
 			}
@@ -45,5 +50,5 @@ void	handle_unset(t_toke *toke, t_copy **copy)
 		else
 			tmp = tmp->next;
 	}
+	return (0);
 }
-

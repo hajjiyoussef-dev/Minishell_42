@@ -10,13 +10,14 @@ void update_env_value(t_copy *copy_env, char *str1, char *path)
 	{
 		if (ft_strcmp(curr->key, str1) == 0)
 		{
-			free(curr->value);
 			curr->value = ft_strdup(path);
 			return;
 		}
 		curr = curr->next;
 	}
-	add_back(&copy_env, new_node(str1, path));
+	add_back(&copy_env, new_node(ft_strdup(str1), ft_strdup(path)));
+	if (!ft_strcmp(str1, "PWD="))
+		add_back(&copy_env, new_node(ft_strdup("secret_pwd="), ft_strdup(path)));
 }
 
 char *get_the_pathe(t_copy *copy_env, char *str)
@@ -27,7 +28,9 @@ char *get_the_pathe(t_copy *copy_env, char *str)
 	while (curr)
 	{
 		if (ft_strcmp(curr->key, str) == 0)
-			return (curr->value);
+		{
+			return (ft_strdup(curr->value));
+		}
 		curr = curr->next;
 	}
 	return (NULL);
@@ -44,17 +47,16 @@ int handle_cd(char **argv, t_data *data)
 	(void)argv;
 
 	if (getcwd(cmd, sizeof(cmd)))
-	oldpwd = ft_strdup(cmd);
+		oldpwd = ft_strdup(cmd);
 	else 
 	{
-		pwd = get_the_pathe(data->copy_env, "PWD");
+		pwd = get_the_pathe(data->copy_env, "PWD=");
 		if (pwd)
-		oldpwd = ft_strdup(pwd);
+			oldpwd = ft_strdup(pwd);
 	}
-	
 	if (!data->token->next || ft_strcmp(data->token->next->str, "~") == 0)
 	{
-		home = get_the_pathe(data->copy_env, "HOME");
+		home = get_the_pathe(data->copy_env, "HOME=");
 		if (!home || chdir(home) != 0)
 		{
 			ft_putstr_fd("minibash: ", STDERR_FILENO);
@@ -80,19 +82,14 @@ int handle_cd(char **argv, t_data *data)
 		ft_putstr_fd(": error retrieving current directory:", STDERR_FILENO);
 		ft_putstr_fd(" getcwd: cannot access parent directories:", STDERR_FILENO);
 		ft_putstr_fd(" No such file or directory\n", STDERR_FILENO);
-		new_pwd = ft_str_join(pwd, "/");
-		tmp = new_pwd;
-		new_pwd = ft_str_join(new_pwd, data->token->next->str);
+		tmp = ft_strjoin(pwd, "/");
+		new_pwd = ft_strjoin(tmp, data->token->next->str);
 	}
 	else
 		new_pwd = ft_strdup(data->token->next->str);
-
 	if (oldpwd)
-		update_env_value(data->copy_env, "OLDPWD", oldpwd);
+		update_env_value(data->copy_env, "OLDPWD=", oldpwd);
 	if (new_pwd)
-		update_env_value(data->copy_env, "PWD", new_pwd);
-	
-	free(oldpwd);
-	free(new_pwd);
+		update_env_value(data->copy_env, "PWD=", new_pwd);
 	return (0);
 }
