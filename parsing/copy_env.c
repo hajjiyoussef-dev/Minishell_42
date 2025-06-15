@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/14 00:06:27 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/15 15:57:49 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/15 19:33:15 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,19 @@ t_copy *copy_env(char **envp)
     char    *value;
     static char    *k[]= {"PWD=", "SHLVL=", "_=", NULL};
     static char    *v[] = {" ", "1", "/usr/bin/env", NULL};
+    char *pwd;
+
+    
     t_copy *copy = NULL;
     if (envp == NULL || envp[0] == NULL)
     {
+        pwd = getcwd(NULL, 0);
         while (i < 3)
         {
             if (i == 0)
             {
                 key = ft_strdup(k[i]);
-                value = ft_strdup(getcwd(NULL, 0));
+                value = ft_strdup(pwd);
                 add_back(&copy, new_node(key, value));
                 i++;
             }
@@ -69,6 +73,7 @@ t_copy *copy_env(char **envp)
             i++;
         }
         add_back(&copy, new_node(ft_strdup("PATH="), ft_strdup("/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")));
+        free(pwd);
         return (copy);
     }
     while (envp[i])

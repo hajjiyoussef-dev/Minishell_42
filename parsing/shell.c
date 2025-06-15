@@ -38,6 +38,7 @@ int main(int ac, char **av, char **envp)
 		expandd(list, data->copy_env, data->last_exit_status);
 		split_word(&list);
 		concatinate(list);
+		handle_wildcards(&list);
 		if (list)
 			data->last_exit_status = check_syntax(list);
 		if (data->last_exit_status == 0)

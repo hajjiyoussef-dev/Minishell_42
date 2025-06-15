@@ -125,6 +125,7 @@ char	*expnand_it(char *str, t_copy *copy, int checker);
 int		check_her_doc(t_toke *toke);
 void 	add_fd(t_fd_track **head, int fd);
 void close_all_fds(t_fd_track **head);
+void handle_wildcards(t_toke **list);
 
 //builtins function !!!
 

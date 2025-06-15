@@ -7,7 +7,7 @@ SRC = lexer.c shell.c tools_fun_0.c syntax.c expand.c tools_fun_1.c copy_env.c \
 		../execution/builtins/unset.c ../execution/builtins/cd.c ../execution/builtins/echo.c ../execution/builtins/exit.c \
 		../execution/builtins/update_export.c ../execution/builtins/print_export.c ../execution/fd_tacker.c ../execution/build_argv.c \
 		../execution/env_list_to_array.c  ../execution/handel_builting_exe.c  ../execution/handle_redirections.c \
-		../execution/find_path.c  
+		../execution/find_path.c  handle_wildcards.c
 
 INC = mini_shell.h
 OBJS = ${SRC:.c=.o}
