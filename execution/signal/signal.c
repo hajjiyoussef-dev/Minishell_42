@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 06:00:15 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/05 17:51:22 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/13 01:50:38 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,19 @@ volatile sig_atomic_t g_sig = 0;
 void sigint_handler(int sig)
 {
 	(void)sig;
+	// printf("%d", g_sig);
 	if (sig == SIGINT && (g_sig != 5656 && g_sig != 555 && g_sig != 222))
 	{
-		write(1, "\n", 1);
+		write(1, "^C\n", 3);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
+		g_sig = 42;
 	}
 	if (sig == SIGINT && g_sig == 222)
 	{
 		close(0);
+		write(1, "^C", 2);
 		g_sig = 111;
 	}
 	if (g_sig == 555)

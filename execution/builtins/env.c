@@ -1,11 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/14 01:55:52 by yhajji            #+#    #+#             */
+/*   Updated: 2025/06/14 01:56:03 by yhajji           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../parsing/mini_shell.h"
 
 void handle_env(t_toke *toke, t_copy *copy)
 {
     t_toke *tmp;
     t_copy *tmp_1;
+    int count;
 
     tmp = toke;
+    count = 0;
+     t_copy *tmp2 = copy;
+    while (tmp2)
+    {
+        tmp2 = tmp2->next;
+        count++;
+    }
+    
     while (tmp)
     {
         if (!ft_strcmp("env", tmp->str))
@@ -13,7 +34,12 @@ void handle_env(t_toke *toke, t_copy *copy)
             tmp_1 = copy;
             while (tmp_1)
             {
-                if (!ft_strcmp(tmp_1->key, "secret_pwd="))
+                if (count == 4 && !ft_strcmp(tmp_1->key, "PATH="))
+                {
+                    tmp_1 = tmp_1->next;
+                    continue ;
+                }
+                if (!ft_strcmp(tmp_1->key, "secret_pwd=") )
                 {
                     tmp_1 = tmp_1->next;
                     continue ;
@@ -26,3 +52,4 @@ void handle_env(t_toke *toke, t_copy *copy)
         tmp = tmp->next;
     }   
 }
+
