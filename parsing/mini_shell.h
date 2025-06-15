@@ -141,7 +141,6 @@ int 	handle_cd(char **argv, t_data *data);
 char	*get_the_pathe(t_copy *copy_env, char *str);
 int		handle_echo(t_toke *start);
 int		handle_exit(t_toke *tokns, t_toke *start, t_data *data);
-t_data	*get_data(t_data *data);
 
 
 // end buitlins function !!!!!
@@ -166,6 +165,13 @@ void sigint_handler2(int sig);
 int execute_cmds(t_data *data);
 void	*gc_malloc(size_t size, int call);
 char	*ft_get_argv_path_help(char *cmd, char **paths);
+int get_the_redirections(t_toke *start);
+int is_single_builtin_cmd(t_toke *start, t_toke *end);
+int execute_builtin(char **argv, t_data *data, t_toke *start);
+bool is_cmd_buitin(char *argv);
+char **env_list_to_array(t_copy *copy_envp);
+char *find_path(char *argv, char **ev);
+char **build_argv(t_toke *cmd_start, t_toke *end_cmd, t_data *data);
 
 // copy of the envp in the t_data struct !!!
 //same tools function 

@@ -22,6 +22,8 @@ int main(int ac, char **av, char **envp)
 		add_fd(&data->fd_tracker, org_in);
 		g_sig = 1;
 		line = readline("minishell> ");
+		if (g_sig == 42)
+			data->last_exit_status = 130;
 		if (!line)
 		{
 			printf("exit\n");
@@ -29,7 +31,8 @@ int main(int ac, char **av, char **envp)
 			close(org_in);
 			break ;
 		}
-		add_history(line);
+		if (line[0])
+			add_history(line);
 		if (!(list = lexer(line)))
 			data->last_exit_status = 2;
 		expandd(list, data->copy_env, data->last_exit_status);
@@ -45,7 +48,6 @@ int main(int ac, char **av, char **envp)
 			
 			if (handle_file(data) == -1337)
 			{
-				// g_sig = 1;
 				dup2(org_in, 0);
 				close(org_in);
 				continue;
