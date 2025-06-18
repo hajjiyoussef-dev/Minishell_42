@@ -39,7 +39,6 @@ int handle_quotes(char *line, int *i, t_toke **list)
 			add_token(list, create_token(word, DB_QT, line[*i]));
 		else
 			add_token(list, create_token(word, SNL_QT, line[*i]));
-		return (1);
 	}
 	return (0);
 }

@@ -99,8 +99,12 @@ t_toke *lexer(char *line)
 			continue;
 		else if (handle_pipe(line, &i, &list))
 			continue;
-		else if (handle_quotes(line, &i, &list))
+		else if (line[i] == '\"' || line[i] == '\'')
+		{
+			if (handle_quotes(line, &i, &list))
+				return (NULL);
 			continue;
+		}
 		else if (handle_redirections(line, &i, &list))
 			continue;
 		else

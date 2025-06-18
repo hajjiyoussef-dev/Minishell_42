@@ -24,6 +24,8 @@ char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 		(*i)++;
 		return (ft_strdup(""));
 	}
+	if ((!ft_isalnum(str[*i]) && str[*i] != '_'))
+		return(ft_strdup("$"));
 	while (str && str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 	{
 		to_search = ft_joinchar(to_search, str[*i]);

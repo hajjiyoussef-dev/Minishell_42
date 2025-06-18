@@ -171,7 +171,7 @@ int is_single_builtin_cmd(t_toke *start, t_toke *end);
 int execute_builtin(char **argv, t_data *data, t_toke *start);
 bool is_cmd_buitin(char *argv);
 char **env_list_to_array(t_copy *copy_envp);
-char *find_path(char *argv, char **ev);
+char *find_path(char *argv, char **ev, bool *is_path);
 char **build_argv(t_toke *cmd_start, t_toke *end_cmd, t_data *data);
 
 // copy of the envp in the t_data struct !!!
