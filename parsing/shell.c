@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/18 16:16:52 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_shell.h"
 
 int main(int ac, char **av, char **envp)
 {
-	t_toke *list;
-	char *line;
+	t_toke	*list;
+	char	*line;
+	t_data	*data;
+	int		exit_status;
 	(void)ac;
 	(void)av;
-	t_data *data;
-	int exit_status;
 	rl_catch_signals = 0;
 
 	data = NULL;
@@ -47,7 +59,6 @@ int main(int ac, char **av, char **envp)
 			data->token = list;
 			if (check_her_doc(list))
                 return(printf("%s\n", "minishell: maximum here-document count exceeded"),free(line), 2);
-			
 			if (handle_file(data) == -1337)
 			{
 				dup2(org_in, 0);

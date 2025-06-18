@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tools_fun_1.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/18 15:38:03 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/18 15:42:15 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_shell.h"
 
-size_t ft_strlen(char const *str)
+size_t	ft_strlen(char const *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	if (!str)
@@ -12,10 +24,10 @@ size_t ft_strlen(char const *str)
 	return (i);
 }
 
-char *ft_joinchar(char *s, char c)
+char	*ft_joinchar(char *s, char c)
 {
-	char *ret;
-	int i;
+	char	*ret;
+	int		i;
 
 	i = 0;
 	ret = gc_malloc(ft_strlen(s) + 2, 1);
@@ -32,12 +44,11 @@ char *ft_joinchar(char *s, char c)
 	return (ret);
 }
 
-char *get_str(char *str, t_copy *copy)
+char	*get_str(char *str, t_copy *copy)
 {
-	t_copy *tmp;
+	t_copy	*tmp;
 
 	tmp = copy;
-
 	while (tmp && str)
 	{
 		if (ft_strcmp(tmp->key, ft_str_join(str, "=")) == 0)
@@ -47,9 +58,9 @@ char *get_str(char *str, t_copy *copy)
 	return (ft_strdup(""));
 }
 
-static int get_length(int n)
+static int	get_length(int n)
 {
-	int len;
+	int	len;
 
 	len = 0;
 	if (n < 0)
@@ -64,10 +75,10 @@ static int get_length(int n)
 	return (len);
 }
 
-char *ft_itoa(int n)
+char	*ft_itoa(int n)
 {
-	char *result;
-	int len;
+	char	*result;
+	int		len;
 
 	if (n == -2147483648)
 		return (ft_strdup("-2147483648"));
@@ -90,14 +101,4 @@ char *ft_itoa(int n)
 		n /= 10;
 	}
 	return (result);
-}
-
-int ft_strcmp(char *s1, char *s2)
-{
-	unsigned int i;
-
-	i = 0;
-	while (s1[i] && s2[i] && s1[i] == s2[i])
-		i++;
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

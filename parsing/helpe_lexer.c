@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helpe_lexer.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/18 16:26:55 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/18 16:26:56 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_shell.h"
 
-int handle_space(char *line, int *i)
+int	handle_space(char *line, int *i)
 {
 	if (line[*i] == ' ' || (line[*i] <= 13 && line[*i] >= 9))
 	{
@@ -10,8 +22,7 @@ int handle_space(char *line, int *i)
 	return (0);
 }
 
-
-int handle_pipe(char *line, int *i, t_toke **list)
+int	handle_pipe(char *line, int *i, t_toke **list)
 {
 	if (line[*i] == '|')
 	{
@@ -22,10 +33,10 @@ int handle_pipe(char *line, int *i, t_toke **list)
 	return (0);
 }
 
-int handle_quotes(char *line, int *i, t_toke **list)
+int	handle_quotes(char *line, int *i, t_toke **list)
 {
-	char tmp;
-	char *word;
+	char	tmp;
+	char	*word;
 
 	if (line[*i] == '\'' || line[*i] == '\"')
 	{
@@ -43,7 +54,7 @@ int handle_quotes(char *line, int *i, t_toke **list)
 	return (0);
 }
 
-int handle_redirections(char *line, int *i, t_toke **list)
+int	handle_redirections(char *line, int *i, t_toke **list)
 {
 	if (line[*i] == '>' && line[*i + 1] == '>')
 	{
@@ -72,9 +83,9 @@ int handle_redirections(char *line, int *i, t_toke **list)
 	return (0);
 }
 
-void handle_word(char *line, int *i, t_toke **list)
+void	handle_word(char *line, int *i, t_toke **list)
 {
-	char *word;
+	char	*word;
 
 	word = copy_word(line, i);
 	add_token(list, create_token(word, WORD, line[*i]));

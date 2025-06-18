@@ -1,5 +1,16 @@
-#include "mini_shell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   concatinate.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/18 16:32:19 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/18 16:32:20 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "mini_shell.h"
 
 int	help_concatinate(t_type type)
 {
@@ -7,6 +18,7 @@ int	help_concatinate(t_type type)
 		return (1);
 	return (0);
 }
+
 t_toke	*concatinate(t_toke *head)
 {
 	t_toke	*tmp;
@@ -17,7 +29,7 @@ t_toke	*concatinate(t_toke *head)
 	{
 		nxt = tmp->next;
 		while (nxt && help_concatinate(nxt->type) && help_concatinate(tmp->type)
-				&& !tmp->space_after)
+			&& !tmp->space_after)
 		{
 			tmp->str = ft_str_join(tmp->str, nxt->str);
 			if (nxt && nxt->space_after)

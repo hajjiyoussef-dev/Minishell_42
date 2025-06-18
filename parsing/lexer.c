@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/18 16:24:06 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/18 16:25:32 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_shell.h"
 
-t_toke *create_token(char *str, t_type type, char spc_aftr)
+t_toke	*create_token(char *str, t_type type, char spc_aftr)
 {
-	t_toke *new_toke;
+	t_toke	*new_toke;
 
 	new_toke = gc_malloc(sizeof(t_toke), 1);
 	if (!new_toke)
@@ -21,9 +33,9 @@ t_toke *create_token(char *str, t_type type, char spc_aftr)
 	return (new_toke);
 }
 
-void add_token(t_toke **list, t_toke *new_token)
+void	add_token(t_toke **list, t_toke *new_token)
 {
-	t_toke *tmp;
+	t_toke	*tmp;
 
 	if (!*list)
 		*list = new_token;
@@ -37,23 +49,23 @@ void add_token(t_toke **list, t_toke *new_token)
 	}
 }
 
-char *copy_word(char *line, int *i)
+char	*copy_word(char *line, int *i)
 {
-	int start;
-	int	j;
+	int		start;
+	int		j;
 	char	*word;
 
 	start = *i;
 	while (line[*i])
 	{
-		if (line[*i] != ' ' && line[*i] != '>' && line[*i] != '|' && line[*i] != '\'' 
-			&& line[*i] != '<' && line[*i] != '\"')
+		if (line[*i] != ' ' && line[*i] != '>' && line[*i] != '|'
+			&& line[*i] != '\'' && line[*i] != '<' && line[*i] != '\"')
 			(*i)++;
 		else
 			break ;
 	}
 	word = gc_malloc((*i - start) + 1, 1);
-    if (!word)
+	if (!word)
 		return (NULL);
 	j = 0;
 	while (start < *i)
@@ -62,51 +74,52 @@ char *copy_word(char *line, int *i)
 	return (word);
 }
 
-char *copy_quoted_word(char *line, int *i)
+char	*copy_quoted_word(char *line, int *i)
 {
-    char    *result;
-    int     start;
-    char    quote;
-	int     t;
+	char	*result;
+	int		start;
+	char	quote;
+	int		t;
 
-    quote = line[*i];
-    (*i)++;
-    start = *i;
-    while (line[*i] && line[*i] != quote)
-        (*i)++;
-    t = 0;
-    result = gc_malloc((*i - start) + 1, 1);
-    if (!result)
-        return (NULL);
-    while (t < (*i - start) && line[start + t])
-    {
-        result[t] = line[start + t];
-        t++;
-    }
-    result[t] = '\0';
-    return (result);
+	quote = line[*i];
+	(*i)++;
+	start = *i;
+	while (line[*i] && line[*i] != quote)
+		(*i)++;
+	t = 0;
+	result = gc_malloc((*i - start) + 1, 1);
+	if (!result)
+		return (NULL);
+	while (t < (*i - start) && line[start + t])
+	{
+		result[t] = line[start + t];
+		t++;
+	}
+	result[t] = '\0';
+	return (result);
 }
 
-
-t_toke *lexer(char *line)
+t_toke	*lexer(char *line)
 {
-	int i = 0;
-	t_toke *list = NULL;
+	int		i;
+	t_toke	*list;
 
+	list = NULL;
+	i = 0;
 	while (line[i])
 	{
 		if (handle_space(line, &i))
-			continue;
+			continue ;
 		else if (handle_pipe(line, &i, &list))
-			continue;
+			continue ;
 		else if (line[i] == '\"' || line[i] == '\'')
 		{
 			if (handle_quotes(line, &i, &list))
 				return (NULL);
-			continue;
+			continue ;
 		}
 		else if (handle_redirections(line, &i, &list))
-			continue;
+			continue ;
 		else
 			handle_word(line, &i, &list);
 	}

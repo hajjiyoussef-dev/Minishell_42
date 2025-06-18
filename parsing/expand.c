@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/18 16:30:22 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/18 16:30:23 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_shell.h"
 
 int	ft_isdigit(char c)
@@ -10,10 +22,11 @@ int	ft_isalnum(char c)
 	return (ft_isdigit(c) || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 }
 
-char *get_varaible(char *str, int *i, t_copy *copy, int checker)
+char	*get_varaible(char *str, int *i, t_copy *copy, int checker)
 {
-	char	*to_search = NULL;
+	char	*to_search;
 
+	to_search = NULL;
 	if (str && str[*i] == '?')
 	{
 		(*i)++;
@@ -25,7 +38,7 @@ char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 		return (ft_strdup(""));
 	}
 	if ((!ft_isalnum(str[*i]) && str[*i] != '_'))
-		return(ft_strdup("$"));
+		return (ft_strdup("$"));
 	while (str && str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 	{
 		to_search = ft_joinchar(to_search, str[*i]);
@@ -34,12 +47,13 @@ char *get_varaible(char *str, int *i, t_copy *copy, int checker)
 	return (get_str(to_search, copy));
 }
 
-
 char	*expnand_it(char *str, t_copy *copy, int checker)
 {
-	char	*res = ft_strdup("");
-	int		i = 0;
+	char	*res;
+	int		i;
 
+	res = ft_strdup("");
+	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i+1])
