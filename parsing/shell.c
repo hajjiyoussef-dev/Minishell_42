@@ -7,6 +7,7 @@ int main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	t_data *data;
+	int exit_status;
 	rl_catch_signals = 0;
 
 	data = NULL;
@@ -59,7 +60,7 @@ int main(int ac, char **av, char **envp)
 		dup2(org_in, 0);
 		close(org_in);
 	}
+	exit_status = data->last_exit_status;
 	gc_malloc(0, 0);
-	// return (data->last_exit_status);
-	return(0);
+	return (exit_status);
 }

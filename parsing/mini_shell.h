@@ -119,7 +119,6 @@ t_copy	*copy_env(char **envp);
 char	*ft_itoa(int n);
 int		handle_file(t_data *data);
 char	**ft_split(char const *s, char c);
-char	*ft_itoa(int n);
 void	split_word(t_toke **toke);
 char	*expnand_it(char *str, t_copy *copy, int checker);
 int		check_her_doc(t_toke *toke);
