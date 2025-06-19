@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 02:09:08 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/13 02:26:05 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 17:57:16 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int execute_builtin(char **argv, t_data *data, t_toke *start)
 {
     if (ft_strcmp(argv[0], "env") == 0)
     {
-        handle_env(data->token, data->copy_env);
+        handle_env(data);
         return (0);
     }
     else if (ft_strcmp(argv[0], "unset") == 0) 

@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 02:27:34 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/14 01:51:44 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 18:21:48 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,14 @@ char	*ft_get_argv_path_help(char *cmd, char **paths)
 	return (NULL);
 }
 
-char *find_path(char *argv, char **ev)
+char *find_path(char *argv, char **ev, bool *is_path)
 {
     int		i;
 	char	**paths;
 	char	*result;
 
+	if (!argv || !argv[0])
+		return (" ");
 	if (ft_str_chr(argv, '/'))
     {
         if (access(argv, X_OK) == 0)
@@ -45,22 +47,19 @@ char *find_path(char *argv, char **ev)
         return (NULL);
     }
 	i = 0;
-	//|| ft_strnstr(ev[i],  "secret_PATH=", 12) == NULL
 	while (ev[i] && (ft_strnstr(ev[i], "PATH=", 5) == NULL))
         i++;
-	// if (!ev[i])
-	// {
-	// 	printf("zdjvbskdjbv\n");
-	// 	while (ev[i] && (ft_strnstr(ev[i],  "secret_PATH=", 12) == NULL))
-	// 		i++;
-	// }
-    if (!ev[i] || !argv || !argv[0])
-		return (NULL);
-	paths = ft_sp_lit(ev[i] + 5, ':');
-	if (!paths)
+    if (!ev[i])
 	{
-		perror("Error: in geting the pathe\n");
+		if (access(argv,  X_OK) == 0)
+			return (ft_strdup(argv));
+		else
+			return (NULL);
 	}
+	paths = ft_split(ev[i] + 5, ':');
+	if (!paths)
+		perror("Error: pathe not found \n");
+	*is_path = true;
 	result = ft_get_argv_path_help(argv, paths);
 	return (result);
 }

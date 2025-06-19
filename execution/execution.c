@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/15 15:36:13 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 18:19:53 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,9 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     int status;
     int is_path_command;
     struct stat statbuf;
+    bool is_path;
     
+    is_path = false;
     signal_setup_child();
     if (get_the_redirections(start) < 0)
     {
@@ -40,16 +42,19 @@ void execute_cmd(t_data *data, t_toke *start, t_toke *end)
     if (is_path_command) {
         cmd_path = argv[0];
     } else {
-        cmd_path = find_path(argv[0], env_list_to_array(data->copy_env));
+        cmd_path = find_path(argv[0], env_list_to_array(data->copy_env), &is_path);
     }
     if (!cmd_path)
     {
         ft_putstr_fd(argv[0], STDERR_FILENO);
-        ft_putendl_fd(": command not found ", STDERR_FILENO);
+        if (is_path)
+            ft_putendl_fd(": command not found ", STDERR_FILENO);
+        else 
+            perror(" ");
         data->last_exit_status = 127;
         return;
     }
-    if (ft_strcmp(argv[0], "./minishell") == 0)
+    if ((ft_strcmp(argv[0], "./minishell") == 0) || (ft_strcmp(argv[0], "minishell") == 0))
     {
         signal(SIGINT, SIG_IGN);
         signal(SIGQUIT, SIG_IGN);
@@ -131,11 +136,12 @@ int     execute_cmds(t_data *data)
     pid_t last_pid = -1;
     int status;
     int p_read_end_fd = -1;
+    int h;
     pid_t waited_pid;
     t_toke *tmp = data->token;
 
     
-    if (tmp && tmp->next == NULL && (ft_strcmp(tmp->str, "./minishell") == 0))
+    if (tmp && tmp->next == NULL && (ft_strcmp(tmp->str, "./minishell") == 0 || ft_strcmp(tmp->str, "minishell") == 0))
         signal_setup2();
     cmd_start = curr;
     while (curr)
@@ -149,6 +155,7 @@ int     execute_cmds(t_data *data)
             }
             if (is_single_builtin_cmd(data->token, curr) && curr->type != PIPE)
             {
+                
                 data->last_exit_status = execute_builtin(&cmd_start->str, data, cmd_start);
                 return (data->last_exit_status);
             }
@@ -168,7 +175,7 @@ int     execute_cmds(t_data *data)
                     close(p_fds[1]);
                 }
                 execute_cmd(data, cmd_start, curr);                  
-                int h = data->last_exit_status;
+                h = data->last_exit_status;
                 close_all_fds(&data->fd_tracker);
                 gc_malloc(0, 0);
                 exit(h);

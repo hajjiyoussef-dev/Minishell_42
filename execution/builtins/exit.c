@@ -6,86 +6,43 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:47:13 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/01 20:17:22 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 17:41:55 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../parsing/mini_shell.h"
 
-static int	ft_isdigit(int c)
+long long	ft_atoi_ll(const char *str, bool *overflow)
 {
-	if (c >= 48 && c <= 57)
-		return (1);
-	return (0);
-}
+	int				sign = 1;
+	long long		result = 0;
+	int				i = 0;
+	int digit;
 
-int	help_atoi(long long arr[], const char *str, int *error)
-{
-	if (!ft_isdigit(str[arr[2]]))
-	{
-		*error = 1;
-		return (0);
-	}
-	if ((arr[0] > (2147483647 / 10) || (arr[0] == 2147483647 / 10
-				&& (str[arr[2]] - '0') > 7)) || (arr[1] == -1
-			&& arr[0] == 2147483647 / 10 && (str[arr[2]] - '0') == 8))
-	{
-		*error = 2;
-		return (0);
-	}
-	arr[0] = (str[arr[2]] - 48) + (arr[0] * 10);
-	return (arr[0]);
-}
-
-int	ft_atoi2(const char *str, bool *overflow)
-{
-	long long	arr[3];
-	int			error;
-
-	error = 0;
-	arr[0] = 0;
-	arr[1] = 1;
-	arr[2] = 0;
-	while (str[arr[2]] == ' ' || str[arr[2]] == '\f' || str[arr[2]] == '\n'
-		|| str[arr[2]] == '\r' || str[arr[2]] == '\v')
-		arr[2]++;
-	if (str[arr[2]] == '-' && ft_isdigit(str[arr[2] + 1]))
-		arr[1] *= -1;
-	if ((str[arr[2]] == '+' && ft_isdigit(str[arr[2] + 1]))
-		|| (str[arr[2]] == '-' && ft_isdigit(str[arr[2] + 1])))
-		arr[2]++;
-	while (str[arr[2]])
-	{
-		arr[0] = help_atoi(arr, str, &error);
-		if (error == 1)
-			return (0);
-		if (error == 2)
-			*overflow = true;
-		arr[2]++;
-	}
-	return (arr[0] * arr[1]);
-}
-
-bool	ft_is_numeric(const char *str)
-{
-	int	i;
-
-	if (!str || !*str)
-		return (false);
-	i = 0;
-	if (str[i] == '-' || str[i] == '+')
+	*overflow = false;
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
+		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
 		i++;
-	if (!str[i]) 
-		return (false);
+	if (str[i] == '-' || str[i] == '+')
+		if (str[i++] == '-')
+			sign = -1;
+	if (!str[i])
+		*overflow = true;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]))
-			return (false);
+		if (str[i] < '0' || str[i] > '9')
+			return (*overflow = true, 0);
+		digit = str[i] - '0';
+		if ((sign == 1 && (result > (LLONG_MAX - digit) / 10))
+			|| (sign == -1 && (-result < (LLONG_MIN + digit) / 10)))
+			*overflow = true;
+		if (*overflow)
+			return (0);
+		result = result * 10 + digit;
 		i++;
 	}
-	return (true);
+	return (result * sign);
 }
-
 
 int handle_exit(t_toke *tokns, t_toke *start, t_data *data)
 {
@@ -115,8 +72,8 @@ int handle_exit(t_toke *tokns, t_toke *start, t_data *data)
 				}
 				if (curr->next != NULL && curr->next->type != PIPE)
 				{
-					exit_code = ft_atoi2(curr->next->str, &overflow);
-					if (!ft_is_numeric(curr->next->str) || overflow == true)
+					exit_code = ft_atoi_ll(curr->next->str, &overflow);
+					if (overflow == true)
 					{
 						write(2, "bash: ", 7);
 						ft_putstr_fd(curr->next->str, STDERR_FILENO);
@@ -142,22 +99,25 @@ int handle_exit(t_toke *tokns, t_toke *start, t_data *data)
 		}
 		if (curr->next != NULL)
 		{
-			ft_putendl_fd("exit", STDERR_FILENO);
-			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-			ft_putendl_fd("too many arguments", STDERR_FILENO);
-			gc_malloc(0, 0);
-			return (1);
+			ft_atoi_ll(curr->next->str, &overflow);
+			if (overflow == true)
+			{
+				ft_putendl_fd("exit", STDERR_FILENO);
+				ft_putstr_fd("bash: exit: ", STDERR_FILENO);
+				ft_putstr_fd(curr->str, STDERR_FILENO);
+				ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+				gc_malloc(0, 0);
+				exit(2);
+			}
 		}
-		if (!ft_is_numeric(curr->str))
+		if (curr->next != NULL)
 		{
 			ft_putendl_fd("exit", STDERR_FILENO);
 			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-			ft_putstr_fd(curr->str, STDERR_FILENO);
-			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-			gc_malloc(0, 0);
-			exit(2);
+			ft_putendl_fd("too many arguments", STDERR_FILENO);
+			return (1);
 		}
-		exit_code = ft_atoi2(curr->str, &overflow);
+		exit_code = ft_atoi_ll(curr->str, &overflow);
 		if (overflow == true)
 		{
 			ft_putendl_fd("exit", STDERR_FILENO);
@@ -174,4 +134,3 @@ int handle_exit(t_toke *tokns, t_toke *start, t_data *data)
 	}
 	return (0);
 }
-

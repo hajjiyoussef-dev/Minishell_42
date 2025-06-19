@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/14 01:55:52 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 17:09:50 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 17:56:25 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../parsing/mini_shell.h"
 
-void	handle_env(t_toke *toke, t_copy *copy)
+void	handle_env(t_data *data)
 {
 	t_toke	*tmp;
 	t_copy	*tmp_1;
 
-	tmp = toke;
+	tmp = data->token;
 	while (tmp)
 	{
 		if (!ft_strcmp("env", tmp->str))
 		{
-			tmp_1 = copy;
+			tmp_1 = data->copy_env;
 			while (tmp_1)
 			{
-				if (!ft_strcmp(tmp_1->key, "secret_pwd="))
+				if (!ft_strcmp(tmp_1->key, "secret_pwd=") || (!ft_strcmp(tmp_1->key, "PATH=") && data->is_env_i== true))
 				{
 					tmp_1 = tmp_1->next;
 					continue ;

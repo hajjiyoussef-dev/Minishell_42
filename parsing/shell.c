@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 13:10:19 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 17:51:17 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static t_data	*init_data(char **envp)
 	if (!isatty(0) || !isatty(1))
 		return (printf("test the project in the r\n"), NULL);
 	data = gc_malloc(sizeof(t_data), 1);
-	data->copy_env = copy_env(envp);
+	data->copy_env = copy_env(envp, data);
 	signal_setup();
 	return (data);
 }

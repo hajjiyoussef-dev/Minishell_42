@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_shell.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:13:14 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 16:47:56 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 18:21:03 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ typedef struct s_data
 	t_fd_track					*fd_tracker;
 	int							last_exit_status;
 	int							signal_status;
+	bool						is_env_i;
 	bool						heredoc_status;
 }								t_data;
 
@@ -102,7 +103,6 @@ typedef struct s_export
 	char						*key;
 	char						*value;
 }								t_export;
-
 
 t_toke							*lexer(char *line);
 t_toke							*create_token(char *str, t_type type,
@@ -129,7 +129,7 @@ char							*ft_strchr(const char *str, int c);
 size_t							ft_strlen(char const *str);
 char							*ft_joinchar(char *s, char c);
 char							*get_str(char *str, t_copy *copy);
-t_copy							*copy_env(char **envp);
+t_copy							*copy_env(char **envp, t_data *data);
 char							*ft_itoa(int n);
 int								handle_file(t_data *data);
 char							**ft_split(char const *s, char c);
@@ -155,7 +155,7 @@ int								is_spc(char *str);
 void							add_back(t_copy **list, t_copy *new_copy);
 t_copy							*new_node(char *key, char *value);
 int								handle_pwd(t_data *data);
-void							handle_env(t_toke *toke, t_copy *copy);
+void							handle_env(t_data *data);
 int								handle_export(t_data *data);
 void							print_export(t_data *data);
 void							update_var(t_copy **env, t_export *export);
@@ -182,7 +182,7 @@ int								execute_builtin(char **argv, t_data *data,
 									t_toke *start);
 bool							is_cmd_buitin(char *argv);
 char							**env_list_to_array(t_copy *copy_envp);
-char							*find_path(char *argv, char **ev);
+char 							*find_path(char *argv, char **ev, bool *is_path);
 char							**build_argv(t_toke *cmd_start, t_toke *end_cmd,
 									t_data *data);
 char							*ft_str_chr(const char *s, int c);
