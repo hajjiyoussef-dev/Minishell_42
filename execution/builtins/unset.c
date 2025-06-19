@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 16:10:45 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/19 16:24:17 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../parsing/mini_shell.h"
 
 void	remove_var(t_copy **copy, char *key)
 {
 	t_copy	*cur;
 	t_copy	*prev;
-	char 	*join;
+	char	*join;
 
 	cur = *copy;
 	prev = NULL;
@@ -17,35 +29,42 @@ void	remove_var(t_copy **copy, char *key)
 				*copy = cur->next;
 			else
 				prev->next = cur->next;
-			break;
+			break ;
 		}
 		prev = cur;
 		cur = cur->next;
 	}
 }
 
+static void	handle_unset_args(t_toke **tmp, t_copy **copy)
+{
+	t_toke	*arg;
+
+	arg = (*tmp)->next;
+	while (arg && (arg->type == WORD
+			|| arg->type == DB_QT || arg->type == SNL_QT))
+	{
+		if (!ft_strcmp(arg->str, "_") || !ft_strcmp(arg->str, "secret_pwd"))
+		{
+			arg = arg->next;
+			continue ;
+		}
+		remove_var(copy, arg->str);
+		arg = arg->next;
+	}
+	*tmp = arg;
+}
+
 int	handle_unset(t_toke *toke, t_copy **copy)
 {
 	t_toke	*tmp;
-	t_toke	*arg;
 
 	tmp = toke;
 	while (tmp)
 	{
 		if (!ft_strcmp("unset", tmp->str) && tmp->next)
 		{
-			arg = tmp->next;
-			while (arg && (arg->type == WORD || arg->type ==  DB_QT || arg->type == SNL_QT))
-			{
-				if (!ft_strcmp(arg->str, "_") || !ft_strcmp(arg->str, "secret_pwd"))
-				{
-					arg = arg->next;
-					continue;
-				}
-				remove_var(copy, arg->str);
-				arg = arg->next;
-			}
-			tmp = arg;
+			handle_unset_args(&tmp, copy);
 		}
 		else
 			tmp = tmp->next;

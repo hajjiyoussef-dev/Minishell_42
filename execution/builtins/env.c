@@ -3,53 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/14 01:55:52 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/14 01:56:03 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 17:09:50 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../parsing/mini_shell.h"
 
-void handle_env(t_toke *toke, t_copy *copy)
+void	handle_env(t_toke *toke, t_copy *copy)
 {
-    t_toke *tmp;
-    t_copy *tmp_1;
-    int count;
+	t_toke	*tmp;
+	t_copy	*tmp_1;
 
-    tmp = toke;
-    count = 0;
-     t_copy *tmp2 = copy;
-    while (tmp2)
-    {
-        tmp2 = tmp2->next;
-        count++;
-    }
-    
-    while (tmp)
-    {
-        if (!ft_strcmp("env", tmp->str))
-        {
-            tmp_1 = copy;
-            while (tmp_1)
-            {
-                if (count == 4 && !ft_strcmp(tmp_1->key, "PATH="))
-                {
-                    tmp_1 = tmp_1->next;
-                    continue ;
-                }
-                if (!ft_strcmp(tmp_1->key, "secret_pwd=") )
-                {
-                    tmp_1 = tmp_1->next;
-                    continue ;
-                }
-                if (ft_strchr(tmp_1->key, '='))
-                    printf("%s%s\n", tmp_1->key, tmp_1->value);
-                tmp_1 = tmp_1->next;
-            }
-        }
-        tmp = tmp->next;
-    }   
+	tmp = toke;
+	while (tmp)
+	{
+		if (!ft_strcmp("env", tmp->str))
+		{
+			tmp_1 = copy;
+			while (tmp_1)
+			{
+				if (!ft_strcmp(tmp_1->key, "secret_pwd="))
+				{
+					tmp_1 = tmp_1->next;
+					continue ;
+				}
+				if (ft_strchr(tmp_1->key, '='))
+					printf("%s%s\n", tmp_1->key, tmp_1->value);
+				tmp_1 = tmp_1->next;
+			}
+		}
+		tmp = tmp->next;
+	}
 }
-

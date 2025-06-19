@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print_export.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 16:17:07 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/19 17:09:59 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../parsing/mini_shell.h"
 
 static void	swap_env_nodes(t_copy *a, t_copy *b)
@@ -44,22 +56,10 @@ void	print_export(t_data *data)
 		return ;
 	sort_env(data->copy_env);
 	cur = data->copy_env;
-    int count = 0;
-    t_copy *tmp2 = data->copy_env;
-    while (tmp2)
-    {
-        tmp2 = tmp2->next;
-        count++;
-    }
 	while (cur)
 	{
 		if (ft_strcmp(cur->key, "_=") != 0)
 		{
-			if (count == 4 && !ft_strcmp(cur->key, "PATH="))
-            {
-                    cur = cur->next;
-                    continue ;
-            }
 			if (!ft_strcmp(cur->key, "secret_pwd="))
 			{
 				cur = cur->next;

@@ -1,10 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 16:16:24 by hrami             #+#    #+#             */
+/*   Updated: 2025/06/19 16:18:06 by hrami            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../parsing/mini_shell.h"
 
-
-int handle_pwd(t_data *data)
+int	help_pwd(t_copy *copy)
 {
-    char *pwd;
-	char *check;
+	t_copy	*tmp;
+
+	tmp = copy;
+	while (copy)
+	{
+		if (ft_strcmp(copy->key, "secret_pwd=") == 0)
+		{
+			printf("%s\n", copy->value);
+			return (0);
+		}
+		copy = copy->next;
+	}
+	return (1);
+}
+
+int	handle_pwd(t_data *data)
+{
+	char	*pwd;
+	char	*check;
 
 	pwd = get_the_pathe(data->copy_env, "PWD=");
 	if (pwd != NULL)
@@ -22,15 +50,7 @@ int handle_pwd(t_data *data)
 			return (0);
 		}
 	}
-	t_copy *copy = data->copy_env;
-	while (copy)
-	{
-		if (ft_strcmp(copy->key, "secret_pwd=") == 0)
-		{
-			printf("%s\n", copy->value);
-			return (0);
-		}
-		copy = copy->next;
-	}
+	if (!help_pwd(data->copy_env))
+		return (0);
 	return (1);
 }
