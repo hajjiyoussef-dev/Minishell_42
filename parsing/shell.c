@@ -6,71 +6,95 @@
 /*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 16:16:52 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 13:10:19 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int main(int ac, char **av, char **envp)
+static t_data	*init_data(char **envp)
+{
+	t_data	*data;
+
+	if (!isatty(0) || !isatty(1))
+		return (printf("test the project in the r\n"), NULL);
+	data = gc_malloc(sizeof(t_data), 1);
+	data->copy_env = copy_env(envp);
+	signal_setup();
+	return (data);
+}
+
+static int	process_tokens(t_data *data, t_toke *list, int org_in, char *line)
+{
+	if (data->last_exit_status == 0)
+	{
+		data->token = list;
+		if (check_her_doc(list))
+			exit((printf("minishell: maximum here-document count exceeded\n"),
+					free(line), 2));
+		if (handle_file(data) == -1337)
+			return (free(line), dup2(org_in, 0), close(org_in), 1);
+		data->last_exit_status = execute_cmds(data);
+	}
+	return (0);
+}
+
+static int	read_and_prepare(t_data *data, char **line,
+	t_toke **list, int org_in)
+{
+	*line = readline("minishell> ");
+	if (g_sig == 42)
+		data->last_exit_status = 130;
+	if (!*line)
+		return (printf("exit\n"), dup2(org_in, 0), close(org_in), -1);
+	if ((*line)[0])
+		add_history(*line);
+	*list = lexer(*line);
+	if (!(*list))
+		data->last_exit_status = 2;
+	expandd(*list, data->copy_env, data->last_exit_status);
+	split_word(list);
+	concatinate(*list);
+	handle_wildcards(list);
+	if (*list)
+		data->last_exit_status = check_syntax(*list);
+	return (0);
+}
+
+static void	minishell_loop(t_data *data)
 {
 	t_toke	*list;
 	char	*line;
-	t_data	*data;
-	int		exit_status;
-	(void)ac;
-	(void)av;
-	rl_catch_signals = 0;
+	int		org_in;
 
-	data = NULL;
-	if (!isatty(0) || !isatty(1))
-		return (printf("test the project in the r\n"), 0);
-	data = gc_malloc((sizeof(t_data)), 1);
-	data->copy_env = copy_env(envp);
-	signal_setup();
 	while (1)
 	{
 		signal_setup();
-		int	org_in = dup(0);
+		org_in = dup(0);
 		add_fd(&data->fd_tracker, org_in);
 		g_sig = 1;
-		line = readline("minishell> ");
-		if (g_sig == 42)
-			data->last_exit_status = 130;
-		if (!line)
-		{
-			printf("exit\n");
-			dup2(org_in, 0);
-			close(org_in);
+		if (read_and_prepare(data, &line, &list, org_in) == -1)
 			break ;
-		}
-		if (line[0])
-			add_history(line);
-		if (!(list = lexer(line)))
-			data->last_exit_status = 2;
-		expandd(list, data->copy_env, data->last_exit_status);
-		split_word(&list);
-		concatinate(list);
-		handle_wildcards(&list);
-		if (list)
-			data->last_exit_status = check_syntax(list);
-		if (data->last_exit_status == 0)
-		{
-			data->token = list;
-			if (check_her_doc(list))
-                return(printf("%s\n", "minishell: maximum here-document count exceeded"),free(line), 2);
-			if (handle_file(data) == -1337)
-			{
-				dup2(org_in, 0);
-				close(org_in);
-				continue;
-			}
-			data->last_exit_status = execute_cmds(data);
-		}
+		if (process_tokens(data, list, org_in, line))
+			continue ;
 		free(line);
 		dup2(org_in, 0);
 		close(org_in);
 	}
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	t_data	*data;
+	int		exit_status;
+
+	(void)ac;
+	(void)av;
+	rl_catch_signals = 0;
+	data = init_data(envp);
+	if (!data)
+		return (0);
+	minishell_loop(data);
 	exit_status = data->last_exit_status;
 	gc_malloc(0, 0);
 	return (exit_status);

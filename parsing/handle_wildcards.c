@@ -3,59 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   handle_wildcards.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 01:28:56 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/15 20:15:27 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 15:45:42 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-
-void	*ft_memcpy(void *dest, const void *src, size_t n)
+t_toke	*replace_token(t_toke *head, t_toke *node_change, t_toke *new_tokne)
 {
-	unsigned char	*d;
-	unsigned char	*s;
-	size_t			i;
-
-	i = 0;
-	d = (unsigned char *)dest;
-	s = (unsigned char *)src;
-	if (dest == src)
-	{
-		return (dest);
-	}
-	while (i < n)
-	{
-		d[i] = s[i];
-		i++;
-	}
-	return (dest);
-}
-
-void *gc_realloc(char **matching, size_t old_size, size_t size)
-{
-	char **tmp;
-	
-	tmp = gc_malloc((sizeof(char *) * size), 1);
-	if (matching)
-	{
-		ft_memcpy(tmp, matching, (old_size * sizeof(char *)));
-	}
-	return (tmp);
-}
-
-t_toke *replace_token(t_toke *head, t_toke *node_change, t_toke *new_tokne)
-{
-	t_toke *prev;
-	t_toke *curr;
-	t_toke *tokne;
+	t_toke	*prev;
+	t_toke	*curr;
+	t_toke	*tokne;
 
 	prev = NULL;
 	curr = head;
 	tokne = new_tokne;
-
 	while (curr && curr != node_change)
 	{
 		prev = curr;
@@ -67,69 +32,19 @@ t_toke *replace_token(t_toke *head, t_toke *node_change, t_toke *new_tokne)
 		tokne = tokne->next;
 	if (prev)
 		prev->next = new_tokne;
-	else 
+	else
 		head = new_tokne;
 	if (tokne)
 		tokne->next = curr->next;
 	return (head);
 }
 
-
-int match_string(const char *str, const char *file_name)
+char	**expand_wildcards(char *str, int *count)
 {
-	if (*file_name == '\0' && *str == '\0')
-		return (1);
-	if (*file_name == '*')
-	{
-		if (match_string(str, file_name + 1))
-			return (1);
-		if (*str && match_string(str + 1, file_name))
-			return (1);
-		return (0);
-	}
-	if (*file_name == '?')
-	{
-		if (*str)
-			return (match_string(str + 1, file_name + 1));
-		else 
-			return (0);
-	}
-	if (*file_name == *str)
-		return (match_string(str + 1, file_name + 1));
-	return (0);
-}
-
-void sort_string_array(char **arr, int size)
-{
-	int i, j;
-	char *tmp;
-
-	if (!arr || size <= 1)
-		return;
-	i = 0;
-	while (i < size - 1)
-	{
-		j = 0;
-		while(j < size - i - 1)
-		{
-			if (ft_strcmp(arr[j], arr[j + 1]) > 0)
-			{
-				tmp = arr[j];
-				arr[j] = arr[j + 1];
-				arr[j + 1] = tmp;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
-char **expand_wildcards(char *str, int *count)
-{
-	DIR *dir;
-	struct dirent *entry;
-	char **matching;
-	int size;
+	DIR				*dir;
+	struct dirent	*entry;
+	char			**matching;
+	int				size;
 
 	size = 0;
 	matching = NULL;
@@ -139,7 +54,7 @@ char **expand_wildcards(char *str, int *count)
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (entry->d_name[0] == '.' && str[0] != '.')
-			continue;
+			continue ;
 		if (match_string(entry->d_name, str))
 		{
 			matching = gc_realloc(matching, size, size + 2);
@@ -153,36 +68,45 @@ char **expand_wildcards(char *str, int *count)
 	return (matching);
 }
 
-void handle_wildcards(t_toke **list)
+static int	replace_with_wildcards(t_toke **list, t_toke **curr)
 {
-	t_toke *curr;
-	t_toke *new_list;
-	t_toke *tmp;
-	int count;
-	int i;
-	char **matches;
+	char	**matches;
+	t_toke	*new_list;
+	t_toke	*tmp;
+	int		arr[2];
+
+	arr[0] = 0;
+	arr[1] = 0;
+	matches = expand_wildcards((*curr)->str, &arr[0]);
+	if (matches && arr[0] > 0)
+	{
+		new_list = NULL;
+		while (arr[1] < arr[0])
+		{
+			add_token(&new_list,
+				create_token(matches[arr[1]], WORD, 1));
+			arr[1]++;
+		}
+		tmp = (*curr)->next;
+		*list = replace_token(*list, *curr, new_list);
+		*curr = tmp;
+		return (1);
+	}
+	return (0);
+}
+
+void	handle_wildcards(t_toke **list)
+{
+	t_toke	*curr;
 
 	curr = *list;
-	count = 0;
-	i = 0;
 	while (curr)
 	{
-		if (curr->type == WORD && (ft_strchr(curr->str, '*') || ft_strchr(curr->str, '?')))
+		if (curr->type == WORD && (ft_strchr(curr->str, '*')
+				|| ft_strchr(curr->str, '?')))
 		{
-			matches = expand_wildcards(curr->str, &count);
-			if (matches && count > 0)
-			{
-				new_list = NULL;
-				while (i < count)
-				{
-					add_token(&new_list, create_token(matches[i], WORD, 1));
-					i++;
-				}
-				tmp = curr->next;
-				*list = replace_token(*list, curr, new_list);
-				curr = tmp;
-				continue;
-			}
+			if (replace_with_wildcards(list, &curr))
+				continue ;
 		}
 		curr = curr->next;
 	}

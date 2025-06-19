@@ -6,69 +6,22 @@
 /*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:55:19 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 16:11:03 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 15:50:06 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-int	handle_heredoc(t_toke *toke, t_data *data)
+static int	check_ambiguous_redirect(t_toke *tmp, int *flag)
 {
-	int fd;
-	int w_fd;
-	static int Fh;
-	char *path;
-	char *tmp;
-	char *line;
-	int u;
-
-	path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh));
-	while (!access(path, F_OK))
+	if ((!*tmp->next->str && tmp->next->type == WORD)
+		|| (tmp->next->is_spc && tmp->next->type == WORD))
 	{
-		Fh++;
-		path = ft_strjoin(ft_strdup("/tmp/heredoc"), ft_itoa(Fh));
+		printf("minishell: ambiguous redirect\n");
+		*flag = 0;
+		return (1);
 	}
-	w_fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	if (w_fd < 0)
-		return (printf("minishell : heredoc error\n"), -1);
-	g_sig = 222;
-	while (1)
-	{
-		u = 0;
-		line = NULL;
-		line = readline("heredoc> ");
-		if (g_sig == 111)
-		{
-			close(w_fd);
-			unlink(path);
-			return (-1337);
-		}
-		if (!line)
-		{
-			printf("minishell: warning: here-document at delimited by end-of-file (wanted `%s')\n", toke->next->str);
-			break ;
-		}
-		if (!ft_strcmp(toke->next->str, line))
-		{
-			free(line);
-			break ;
-		}
-		if (toke->next->type == WORD && ft_strchr(line, '$'))
-		{
-			tmp = expand_line(line, data);
-			free(line);
-			line = tmp;
-			u = 1;
-		}
-		write(w_fd, line, ft_strlen(line));
-		write(w_fd, "\n", 1);
-		if (!u)
-			free(line);
-	}
-	close(w_fd);
-	fd = open(path, O_RDONLY);
-	unlink(path);
-	return (fd);
+	return (0);
 }
 
 static void	handle_redir_in_out(t_toke *tmp, int *flag, t_data *data)
@@ -76,15 +29,8 @@ static void	handle_redir_in_out(t_toke *tmp, int *flag, t_data *data)
 	int		mode;
 	char	*msg;
 
-	if (!*flag)
+	if (!*flag || check_ambiguous_redirect(tmp, flag))
 		return ;
-	if ((!*tmp->next->str && tmp->next->type == WORD)
-		|| (tmp->next->is_spc && tmp->next->type == WORD))
-	{
-		printf("minishell: ambiguous redirect\n");
-		*flag = 0;
-		return ;
-	}
 	mode = O_RDONLY;
 	msg = "No such file or directory";
 	if (tmp->type == REDIR_OUT)

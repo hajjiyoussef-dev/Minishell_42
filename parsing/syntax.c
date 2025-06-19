@@ -6,7 +6,7 @@
 /*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:44:21 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 15:45:42 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 16:47:05 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,9 @@ int	check_syntax(t_toke *tokens)
 		cur = cur->next;
 	}
 	return (0);
+}
+
+int	ft_isalpha(int c)
+{
+	return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
 }

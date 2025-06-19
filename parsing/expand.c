@@ -6,7 +6,7 @@
 /*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:30:22 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 16:30:23 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 12:42:04 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*expnand_it(char *str, t_copy *copy, int checker)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i+1])
+		if (str[i] == '$' && str[i + 1])
 		{
 			i++;
 			res = ft_strjoin(res, get_varaible(str, &i, copy, checker));
@@ -68,30 +68,6 @@ char	*expnand_it(char *str, t_copy *copy, int checker)
 		}
 	}
 	return (res);
-}
-
-void	expand_heredoc(t_toke **tmp)
-{
-	t_toke	*prev;
-
-	*tmp = (*tmp)->next;
-	prev = *tmp;
-	if (!*tmp)
-		return ;
-	if (!(*tmp)->next)
-		return ;
-	if (!ft_strcmp((*tmp)->str, "$"))
-	{
-		if (!(*tmp)->space_after && (*tmp)->next)
-			(*tmp)->str = ft_strdup("");
-		else
-			(*tmp)->str = ft_strdup("$");
-	}
-	while (*tmp && !(*tmp)->space_after)
-	{
-		*tmp = (*tmp)->next;
-		prev->type = DB_QT;
-	}
 }
 
 void	expandd(t_toke *head, t_copy *copy, int checker)

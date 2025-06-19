@@ -6,7 +6,7 @@
 /*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:48:55 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 15:54:18 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 12:11:54 by hrami            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,23 +47,10 @@ t_toke	*new(char *str, t_type type, int flag)
 	return (new_toke);
 }
 
-void	add_node(t_toke **toke, char **str, int count)
+static void	insert_words(t_toke *tmp, char **str, t_toke *after, int space)
 {
-	t_toke	*tmp;
-	t_toke	*after;
-	int		i;
-	int		space;
+	int	i;
 
-	tmp = *toke;
-	i = 0;
-	while (tmp && i++ < count)
-		tmp = tmp->next;
-	if (!tmp || !str || !str[0])
-		return ;
-	after = tmp->next;
-	space = tmp->space_after;
-	tmp->str = ft_strdup(str[0]);
-	tmp->space_after = 1;
 	i = 1;
 	while (str[i])
 	{
@@ -77,44 +64,26 @@ void	add_node(t_toke **toke, char **str, int count)
 	tmp->next = after;
 }
 
-void	skip_doll(t_toke **toke)
+void	add_node(t_toke **toke, char **str, int count)
 {
 	t_toke	*tmp;
-	t_toke	*prev;
+	t_toke	*after;
+	int		i;
+	int		space;
 
+	if (!toke || !str || !str[0])
+		return ;
 	tmp = *toke;
-	prev = NULL;
-	while (tmp && tmp->next)
-	{
-		if (tmp->type == WORD && !tmp->space_after
-			&& !ft_strcmp(tmp->str, "$")
-			&& (tmp->next->type == DB_QT || tmp->next->type == SNL_QT))
-		{
-			if (!prev)
-				*toke = tmp->next;
-			else
-				prev->next = tmp->next;
-			tmp = tmp->next;
-			continue ;
-		}
-		prev = tmp;
+	i = 0;
+	while (tmp && i++ < count)
 		tmp = tmp->next;
-	}
-}
-
-void	ambiguous(t_toke **toke)
-{
-	t_toke	*tmp;
-
-	tmp = *toke;
-	while (tmp)
-	{
-		if (is_spc(tmp->str))
-			tmp->is_spc = 1;
-		else
-			tmp->is_spc = 0;
-		tmp = tmp->next;
-	}
+	if (!tmp)
+		return ;
+	after = tmp->next;
+	space = tmp->space_after;
+	tmp->str = ft_strdup(str[0]);
+	tmp->space_after = 1;
+	insert_words(tmp, str, after, space);
 }
 
 void	split_word(t_toke **toke)
