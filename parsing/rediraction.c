@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   rediraction.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:55:19 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 15:50:06 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:21 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 static int	check_ambiguous_redirect(t_toke *tmp, int *flag)
 {

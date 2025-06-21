@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 12:28:44 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/20 12:30:31 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:42:30 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 int	help_atoi(const char *str, long long arr[], bool *overflow)
 {

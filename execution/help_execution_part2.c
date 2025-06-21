@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 22:06:09 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 22:21:17 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:40:37 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 void	pipe_check(int *p_read_end_fd, pid_t arr_pid[2], t_toke *curr,
 		pid_t p_fds[2])

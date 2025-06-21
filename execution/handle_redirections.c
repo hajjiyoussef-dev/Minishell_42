@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 20:05:22 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/13 02:08:04 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:40:53 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 int	get_the_redirections(t_toke *start)
 {

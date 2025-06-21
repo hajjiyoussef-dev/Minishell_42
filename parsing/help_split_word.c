@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   help_split_word.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:02:21 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 12:40:53 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:44 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 void	skip_doll(t_toke **toke)
 {

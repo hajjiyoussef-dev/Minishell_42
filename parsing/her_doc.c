@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:32:43 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/21 20:01:35 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:36 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 static int	handle_heredoc_line(char **line, t_toke *toke,
 	t_data *data, int w_fd)

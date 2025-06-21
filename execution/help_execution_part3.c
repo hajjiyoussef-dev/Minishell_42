@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 22:09:17 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 22:56:06 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:40:27 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 void	print_msg(char *arg, char *msg, int code)
 {

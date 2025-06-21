@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tools_fun_1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:38:03 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 15:42:15 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:38:59 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 size_t	ft_strlen(char const *str)
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   herdoc_setup.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:05:01 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 16:12:51 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:30 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 char	*get_key(char *str, t_copy *copy)
 {

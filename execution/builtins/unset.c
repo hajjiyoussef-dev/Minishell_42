@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:10:45 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 16:24:17 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:42:17 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 void	remove_var(t_copy **copy, char *key)
 {

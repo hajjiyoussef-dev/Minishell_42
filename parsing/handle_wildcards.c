@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 01:28:56 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 23:21:59 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:38:49 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 t_toke	*replace_token(t_toke *head, t_toke *node_change, t_toke *new_tokne)
 {

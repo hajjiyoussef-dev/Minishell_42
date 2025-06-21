@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 22:01:03 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 22:18:54 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:40:42 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 void	check_minishell_special_case(t_data *data)
 {

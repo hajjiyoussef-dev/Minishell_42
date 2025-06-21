@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:18:00 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/20 13:11:45 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:42:45 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 static int	is_valid_start(char *str, t_data *data)
 {

@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 02:27:34 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/20 12:11:45 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:41:17 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 char	*help_find_path(char *argv)
 {

@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 10:43:21 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/20 10:43:33 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:43:19 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 char	*get_oldpwd(t_data *data)
 {

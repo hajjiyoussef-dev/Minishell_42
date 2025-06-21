@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/14 00:06:27 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 18:14:27 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:40:10 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 t_copy	*new_node(char *key, char *value)
 {

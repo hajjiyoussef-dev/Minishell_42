@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:34:01 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/20 13:00:18 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:43:09 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 bool	is_op_n(char *str)
 {

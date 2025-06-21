@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/14 01:55:52 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/20 13:12:28 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:42:58 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 void	handle_env(t_data *data)
 {

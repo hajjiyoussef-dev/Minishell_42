@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:05:00 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/21 23:19:49 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:51 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {

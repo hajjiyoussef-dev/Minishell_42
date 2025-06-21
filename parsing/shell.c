@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/21 22:58:25 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:38:36 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 static t_data	*init_data(char **envp)
 {

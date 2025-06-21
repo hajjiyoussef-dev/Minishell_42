@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:47:13 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 18:46:12 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:42:52 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 static void	exit_with_error(char *arg, int code)
 {

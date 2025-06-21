@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 02:26:53 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/13 02:27:15 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:41:46 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 char	**env_list_to_array(t_copy *copy_envp)
 {

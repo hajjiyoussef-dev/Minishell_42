@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:17:07 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/20 13:07:38 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:42:26 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../parsing/mini_shell.h"
+#include "../../mini_shell.h"
 
 static void	swap_env_nodes(t_copy *a, t_copy *b)
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tools_fun_0.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:41:12 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 15:44:16 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:03 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 char	*ft_strdup(char *str)
 {

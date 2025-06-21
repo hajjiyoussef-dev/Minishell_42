@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   helpe_lexer.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:26:55 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/18 16:26:56 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:39:40 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_shell.h"
+#include "../mini_shell.h"
 
 int	handle_space(char *line, int *i)
 {

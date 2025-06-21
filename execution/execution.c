@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 22:48:04 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:41:30 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 void	last_execution(t_data *data, char *cmd_path, char **argv)
 {

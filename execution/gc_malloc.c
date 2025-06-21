@@ -6,11 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 20:48:24 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 18:54:45 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 23:41:03 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../parsing/mini_shell.h"
+#include "../mini_shell.h"
 
 t_gc	*new_node_ma(void *ptr)
 {
