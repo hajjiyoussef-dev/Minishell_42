@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:17:07 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 17:49:54 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/20 13:07:38 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ void	print_export(t_data *data)
 	{
 		if (ft_strcmp(cur->key, "_=") != 0)
 		{
-			if (!ft_strcmp(cur->key, "secret_pwd=") || (!ft_strcmp(cur->key, "PATH=") && data->is_env_i== true))
+			if (!ft_strcmp(cur->key, "secret_pwd=")
+				|| (!ft_strcmp(cur->key, "PATH=") && data->is_env_i == true))
 			{
 				cur = cur->next;
 				continue ;

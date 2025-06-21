@@ -6,21 +6,17 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 06:00:15 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/13 01:50:38 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 19:23:40 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../parsing/mini_shell.h"
 
-volatile sig_atomic_t g_sig = 0;
+volatile sig_atomic_t	g_sig = 0;
 
-
-
-
-void sigint_handler(int sig)
+void	sigint_handler(int sig)
 {
 	(void)sig;
-	// printf("%d", g_sig);
 	if (sig == SIGINT && (g_sig != 5656 && g_sig != 555 && g_sig != 222))
 	{
 		write(1, "^C\n", 3);
@@ -36,11 +32,10 @@ void sigint_handler(int sig)
 		g_sig = 111;
 	}
 	if (g_sig == 555)
-	{
 		write(1, "\n", 1);
-	}
 }
-void sigint_handler2(int sig)
+
+void	sigint_handler2(int sig)
 {
 	(void)sig;
 	if (sig == SIGINT && (g_sig != 5656 && g_sig != 555 && g_sig != 222))
@@ -57,21 +52,19 @@ void sigint_handler2(int sig)
 	}
 }
 
-void signal_setup(void)
+void	signal_setup(void)
 {
-	
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void signal_setup2(void)
+void	signal_setup2(void)
 {
-	
 	signal(SIGINT, sigint_handler2);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void signal_setup_child(void)
+void	signal_setup_child(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);

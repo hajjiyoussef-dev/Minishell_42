@@ -6,30 +6,11 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 04:35:06 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/13 02:46:34 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/19 20:21:53 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parsing/mini_shell.h"
-
-
-char	*ft_str_chr(const char *s, int c)
-{
-	unsigned char	c1;
-
-	c1 = (unsigned char)c;
-	while (*s)
-	{
-		if (*s == c1)
-		{
-			return ((char *)s);
-		}
-		s++;
-	}
-	if (c1 == '\0')
-		return ((char *)s);
-	return (0);
-}
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
@@ -53,21 +34,24 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	}
 	return (NULL);
 }
-void ft_putstr_fd(char *str, int fd)
-{
-	int i = 0;
 
-	while(str[i])
+void	ft_putstr_fd(char *str, int fd)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
 	{
 		write(fd, &str[i], 1);
 		i++;
 	}
 }
 
-void ft_putendl_fd(char *str, int fd)
+void	ft_putendl_fd(char *str, int fd)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (str[i])
 	{
 		write(fd, &str[i], 1);
@@ -76,14 +60,14 @@ void ft_putendl_fd(char *str, int fd)
 	write(fd, "\n", 1);
 }
 
-void ft_putendl_fd_2(char *str, int fd)
+void	ft_putendl_fd_2(char *str, int fd)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (str[i])
 	{
 		write(fd, &str[i], 1);
 		i++;
 	}
 }
-

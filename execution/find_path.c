@@ -6,11 +6,19 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 02:27:34 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 18:21:48 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/20 12:11:45 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parsing/mini_shell.h"
+
+char	*help_find_path(char *argv)
+{
+	if (access(argv, X_OK) == 0)
+		return (ft_strdup(argv));
+	else
+		return (NULL);
+}
 
 char	*ft_get_argv_path_help(char *cmd, char **paths)
 {
@@ -19,6 +27,8 @@ char	*ft_get_argv_path_help(char *cmd, char **paths)
 	char	*real_path;
 
 	i = 0;
+	if (!ft_strcmp(cmd, ".."))
+		return (NULL);
 	while (paths[i])
 	{
 		part_path = ft_strjoin(paths[i], "/");
@@ -32,30 +42,25 @@ char	*ft_get_argv_path_help(char *cmd, char **paths)
 	return (NULL);
 }
 
-char *find_path(char *argv, char **ev, bool *is_path)
+char	*find_path(char *argv, char **ev, bool *is_path)
 {
-    int		i;
+	int		i;
 	char	**paths;
 	char	*result;
 
 	if (!argv || !argv[0])
-		return (" ");
-	if (ft_str_chr(argv, '/'))
-    {
-        if (access(argv, X_OK) == 0)
-            return (ft_strdup(argv));
-        return (NULL);
-    }
+		return (*is_path = true, NULL);
+	if (ft_strchr(argv, '/'))
+	{
+		if (access(argv, X_OK) == 0)
+			return (ft_strdup(argv));
+		return (NULL);
+	}
 	i = 0;
 	while (ev[i] && (ft_strnstr(ev[i], "PATH=", 5) == NULL))
-        i++;
-    if (!ev[i])
-	{
-		if (access(argv,  X_OK) == 0)
-			return (ft_strdup(argv));
-		else
-			return (NULL);
-	}
+		i++;
+	if (!ev[i] || !argv || !argv[0])
+		return (help_find_path(argv));
 	paths = ft_split(ev[i] + 5, ':');
 	if (!paths)
 		perror("Error: pathe not found \n");

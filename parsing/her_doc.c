@@ -3,39 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   her_doc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 12:32:43 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 12:50:49 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 20:01:35 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_shell.h"
 
-static int	handle_heredoc_line(char *line, t_toke *toke,
+static int	handle_heredoc_line(char **line, t_toke *toke,
 	t_data *data, int w_fd)
 {
 	char	*tmp;
 	int		expanded;
 
-	if (!line)
+	if (!*line)
 	{
 		printf("minishell: warning:(wanted `%s')\n", toke->next->str);
 		return (1);
 	}
-	if (!ft_strcmp(toke->next->str, line))
-		return (free(line), 1);
+	if (!ft_strcmp(toke->next->str, *line))
+		return (free(*line), 1);
 	expanded = 0;
-	if (toke->next->type == WORD && ft_strchr(line, '$'))
+	if (toke->next->type == WORD && ft_strchr(*line, '$'))
 	{
-		tmp = expand_line(line, data);
-		line = tmp;
+		tmp = expand_line(*line, data);
+		free(*line);
+		*line = tmp;
 		expanded = 1;
 	}
-	write(w_fd, line, ft_strlen(line));
+	write(w_fd, *line, ft_strlen(*line));
 	write(w_fd, "\n", 1);
 	if (!expanded)
-		free(line);
+		free(*line);
 	return (0);
 }
 
@@ -50,7 +51,7 @@ static int	write_heredoc_lines(int w_fd, char *path,
 		line = readline("heredoc> ");
 		if (g_sig == 111)
 			return (close(w_fd), unlink(path), -1337);
-		res = handle_heredoc_line(line, toke, data, w_fd);
+		res = handle_heredoc_line(&line, toke, data, w_fd);
 		if (res)
 			break ;
 	}
@@ -78,6 +79,7 @@ int	handle_heredoc(t_toke *toke, t_data *data)
 		return (-1337);
 	close(w_fd);
 	fd = open(path, O_RDONLY);
+	add_fd(&data->fd_tracker, fd);
 	unlink(path);
 	return (fd);
 }

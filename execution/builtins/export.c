@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 16:18:00 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 18:08:18 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/20 13:11:45 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,7 @@ static int	process_export_arg(t_data *data, t_toke **tmp)
 	if (!export->key)
 		return (1);
 	if (!ft_strcmp(export->key, "PATH"))
-	{
-		data->is_env_i = false;	
-	}
+		data->is_env_i = false;
 	export->value = ft_substr((*tmp)->next->str, j + 1,
 			ft_strlen((*tmp)->next->str) - j);
 	if (!export->value)

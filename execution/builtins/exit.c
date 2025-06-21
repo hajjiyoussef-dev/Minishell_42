@@ -6,131 +6,103 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:47:13 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 17:41:55 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 18:46:12 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../parsing/mini_shell.h"
 
-long long	ft_atoi_ll(const char *str, bool *overflow)
+static void	exit_with_error(char *arg, int code)
 {
-	int				sign = 1;
-	long long		result = 0;
-	int				i = 0;
-	int digit;
-
-	*overflow = false;
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
-		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-		if (str[i++] == '-')
-			sign = -1;
-	if (!str[i])
-		*overflow = true;
-	while (str[i])
-	{
-		if (str[i] < '0' || str[i] > '9')
-			return (*overflow = true, 0);
-		digit = str[i] - '0';
-		if ((sign == 1 && (result > (LLONG_MAX - digit) / 10))
-			|| (sign == -1 && (-result < (LLONG_MIN + digit) / 10)))
-			*overflow = true;
-		if (*overflow)
-			return (0);
-		result = result * 10 + digit;
-		i++;
-	}
-	return (result * sign);
+	ft_putendl_fd("exit", 2);
+	ft_putstr_fd("bash: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putendl_fd(": numeric argument required", 2);
+	gc_malloc(0, 0);
+	exit(code);
 }
 
-int handle_exit(t_toke *tokns, t_toke *start, t_data *data)
+static bool	check_for_pipes(t_toke *tokns)
 {
-	t_toke *curr = tokns;
-	int exit_code = 0;
-	bool overflow;
-	bool flag = false;
+	t_toke	*curr;
+	bool	has_pipe;
 
-	overflow = false;
+	curr = tokns;
+	has_pipe = false;
 	while (curr)
-    {
-        if (curr->type == PIPE)
-            flag = true;
-        curr = curr->next;
-    }
+	{
+		if (curr->type == PIPE)
+			has_pipe = true;
+		curr = curr->next;
+	}
+	return (has_pipe);
+}
+
+static int	handle_piped_exit(t_toke *start)
+{
+	t_toke	*curr;
+	int		exit_code;
+	bool	overflow;
+
 	curr = start;
-	if (flag == true)
+	while (curr && curr->next && curr->next->type != PIPE)
 	{
-		while (curr && curr->next != NULL && curr->next->type != PIPE)
+		if (ft_strcmp(curr->str, "exit") == 0 && curr->next->type != PIPE)
 		{
-			if ((ft_strcmp(curr->str, "exit") == 0) && curr->next->type != PIPE)
+			if (curr->next->next && curr->next->next->type != PIPE)
+				return (write(2, "bash: exit: too many arguments\n", 32), 1);
+			if (curr->next && curr->next->type != PIPE)
 			{
-				if (curr->next->next != NULL && curr->next->next->type != PIPE)
-				{
-					write(2, "bash: exit: too many arguments\n", 32);
-					return (1);
-				}
-				if (curr->next != NULL && curr->next->type != PIPE)
-				{
-					exit_code = ft_atoi_ll(curr->next->str, &overflow);
-					if (overflow == true)
-					{
-						write(2, "bash: ", 7);
-						ft_putstr_fd(curr->next->str, STDERR_FILENO);
-						write(2, ": numeric argument required\n", 29);
-						return (2);
-					}
-					return(exit_code);
-				}
-				return (0);
+				exit_code = ft_atoi(curr->next->str, &overflow);
+				if (overflow)
+					return ((write(2, "bash: ", 7)
+							, ft_putstr_fd(curr->next->str, 2))
+						, write(2, ": numeric argument required\n", 29), 2);
+				return (exit_code);
 			}
-			curr = curr->next;
+			return (0);
 		}
-		return (2);
+		curr = curr->next;
 	}
-	else if (flag == false)
+	return (2);
+}
+
+static void	handle_standalone_exit(t_toke *curr, t_data *data)
+{
+	int		exit_code;
+	bool	overflow;
+
+	if (!curr)
 	{
-		curr = start->next;
-		if (!curr)
-		{
-			ft_putstr_fd("exit\n", STDOUT_FILENO);
-			gc_malloc(0, 0);
-			exit(0);
-		}
-		if (curr->next != NULL)
-		{
-			ft_atoi_ll(curr->next->str, &overflow);
-			if (overflow == true)
-			{
-				ft_putendl_fd("exit", STDERR_FILENO);
-				ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-				ft_putstr_fd(curr->str, STDERR_FILENO);
-				ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-				gc_malloc(0, 0);
-				exit(2);
-			}
-		}
-		if (curr->next != NULL)
-		{
-			ft_putendl_fd("exit", STDERR_FILENO);
-			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-			ft_putendl_fd("too many arguments", STDERR_FILENO);
-			return (1);
-		}
-		exit_code = ft_atoi_ll(curr->str, &overflow);
-		if (overflow == true)
-		{
-			ft_putendl_fd("exit", STDERR_FILENO);
-			ft_putstr_fd("bash: exit: ", STDERR_FILENO);
-			ft_putstr_fd(curr->str, STDERR_FILENO);
-			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-			gc_malloc(0, 0);
-			exit(2);
-		}	
-		ft_putstr_fd("exit\n", STDOUT_FILENO);
-		data->last_exit_status = (exit_code % 256);
+		ft_putstr_fd("exit\n", 1);
 		gc_malloc(0, 0);
-		exit(exit_code % 256);
+		exit(0);
 	}
-	return (0);
+	if (curr->next)
+	{
+		ft_atoi(curr->str, &overflow);
+		if (overflow)
+			exit_with_error(curr->str, 2);
+		ft_putendl_fd("exit", 2);
+		ft_putstr_fd("bash: exit: too many arguments\n", 2);
+		data->last_exit_status = 1;
+		return ;
+	}
+	exit_code = ft_atoi(curr->str, &overflow);
+	if (overflow)
+		exit_with_error(curr->str, 2);
+	ft_putstr_fd("exit\n", 1);
+	data->last_exit_status = exit_code % 256;
+	(gc_malloc(0, 0), exit(exit_code % 256));
+}
+
+int	handle_exit(t_toke *tokns, t_toke *start, t_data *data)
+{
+	if (check_for_pipes(tokns))
+		return (handle_piped_exit(start));
+	else
+	{
+		handle_standalone_exit(start->next, data);
+		return (data->last_exit_status);
+	}
 }

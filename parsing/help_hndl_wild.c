@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   help_hndl_wild.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:05:00 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 16:03:23 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:19:49 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,31 @@ void	*gc_realloc(char **matching, size_t old_size, size_t size)
 	return (tmp);
 }
 
+int	help_match_string(const char **s, const char **p, const char **star,
+							const char **ss)
+{
+	if (**p == '?' || **p == **s)
+	{
+		(*s)++;
+		(*p)++;
+	}
+	else if (**p == '*')
+	{
+		*star = *p;
+		(*p)++;
+		*ss = *s;
+	}
+	else if (*star)
+	{
+		*p = *star + 1;
+		(*ss)++;
+		*s = *ss;
+	}
+	else
+		return (1);
+	return (0);
+}
+
 int	match_string(const char *file_name, const char *str)
 {
 	const char	*s;
@@ -58,22 +83,7 @@ int	match_string(const char *file_name, const char *str)
 	ss = NULL;
 	while (*s)
 	{
-		if (*p == '?' || *p == *s)
-		{
-			s++;
-			p++;
-		}
-		else if (*p == '*')
-		{
-			star = p++;
-			ss = s;
-		}
-		else if (star)
-		{
-			p = star + 1;
-			s = ++ss;
-		}
-		else
+		if (help_match_string(&s, &p, &star, &ss))
 			return (0);
 	}
 	while (*p == '*')

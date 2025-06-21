@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 19:02:30 by yhajji            #+#    #+#             */
-/*   Updated: 2025/05/29 17:49:19 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/19 18:56:52 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parsing/mini_shell.h"
-
 
 size_t	ft_str_len(const char *s)
 {
@@ -21,9 +20,7 @@ size_t	ft_str_len(const char *s)
 	if (!s)
 		return (0);
 	while (s[i] != '\0')
-	{
 		i++;
-	}
 	return (i);
 }
 

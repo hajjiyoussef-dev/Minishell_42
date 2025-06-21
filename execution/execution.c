@@ -6,210 +6,102 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:42:20 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 18:19:53 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 22:48:04 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parsing/mini_shell.h"
 
-void execute_cmd(t_data *data, t_toke *start, t_toke *end)
+void	last_execution(t_data *data, char *cmd_path, char **argv)
 {
-    char **argv;
-    char *cmd_path;
-    pid_t pid;
-    int status;
-    int is_path_command;
-    struct stat statbuf;
-    bool is_path;
-    
-    is_path = false;
-    signal_setup_child();
-    if (get_the_redirections(start) < 0)
-    {
-        exit(1);
-    }
-    argv = build_argv(start, end, data);
-    if (!argv || !argv[0])
-    {
-        return;
-    }
-    if (is_cmd_buitin(argv[0]))
-    {
-        data->last_exit_status = execute_builtin(argv, data, start);
-        return;
-    }
-    is_path_command = (ft_strchr(argv[0], '/') != NULL);
-    if (is_path_command) {
-        cmd_path = argv[0];
-    } else {
-        cmd_path = find_path(argv[0], env_list_to_array(data->copy_env), &is_path);
-    }
-    if (!cmd_path)
-    {
-        ft_putstr_fd(argv[0], STDERR_FILENO);
-        if (is_path)
-            ft_putendl_fd(": command not found ", STDERR_FILENO);
-        else 
-            perror(" ");
-        data->last_exit_status = 127;
-        return;
-    }
-    if ((ft_strcmp(argv[0], "./minishell") == 0) || (ft_strcmp(argv[0], "minishell") == 0))
-    {
-        signal(SIGINT, SIG_IGN);
-        signal(SIGQUIT, SIG_IGN);
-        data->signal_status = 42;
-    }
-    pid = fork();
-    g_sig = 5656;
-    if (pid == 0)
-    {
-        signal_setup_child();
-        if (stat(cmd_path, &statbuf) == 0)
-        {
-            if ((statbuf.st_mode & 0170000) == 0040000)
-            {
-                ft_putstr_fd("minishell: ", STDERR_FILENO);
-                ft_putstr_fd(cmd_path, STDERR_FILENO);
-                ft_putendl_fd(": Is a directory", STDERR_FILENO);
-                exit(126);
-            }
-        }
-        execve(cmd_path, argv, env_list_to_array(data->copy_env));
-        if (errno == EACCES)
-        {
-            ft_putstr_fd("minishell: ", STDERR_FILENO);
-            ft_putstr_fd(cmd_path, STDERR_FILENO);
-            ft_putendl_fd(": Permission denied", STDERR_FILENO);
-            exit(126);
-        }
-        else if (errno == ENOENT)
-        {
-            ft_putstr_fd("minishell: ", STDERR_FILENO);
-            ft_putstr_fd(cmd_path, STDERR_FILENO);
-            ft_putendl_fd(": No such file or directory", STDERR_FILENO);
-            exit(127);
-        }
-        else if (errno == ENOEXEC)
-        {
-            char *sh_argv[] = {"/bin/sh", cmd_path, NULL};
-            execve("/bin/sh", sh_argv, env_list_to_array(data->copy_env));
-            perror("minishell: fallback with /bin/sh failed");
-            exit(126);
-        }
-        else
-        {
-            perror("minishell");
-        }
-        gc_malloc(0, 0);
-        exit(127);
-    }
-    else if (pid > 0)
-    {
-             
-        waitpid(pid, &status, 0);
-        if(WIFEXITED(status))
-        {
-            data->last_exit_status = WEXITSTATUS(status); 
-        }
-        else if (WIFSIGNALED(status))
-        {
-            data->last_exit_status = 128 + WTERMSIG(status);
-            if (WTERMSIG(status) == SIGQUIT)
-                write(1, "Quit\n", 6);
-        }
-        close_all_fds(&data->fd_tracker);
-    }
-    else 
-    {
-        perror("fork failed");
-        data->last_exit_status = 1;
-    }
+	signal_setup_child();
+	close_all_fds(&data->fd_tracker);
+	check_if_directory(cmd_path);
+	exec_ve_scope(data, cmd_path, argv);
+	close_all_fds(&data->fd_tracker);
+	gc_malloc(0, 0);
+	exit(127);
 }
 
-int     execute_cmds(t_data *data)
+int	check_argv_and_builtin(char **argv, t_data *data, t_toke *start)
 {
-    t_toke *curr = data->token;
-    t_toke *cmd_start;
-    int p_fds[2];
-    pid_t pid;
-    pid_t last_pid = -1;
-    int status;
-    int p_read_end_fd = -1;
-    int h;
-    pid_t waited_pid;
-    t_toke *tmp = data->token;
+	if (!argv || !argv[0])
+		return (1);
+	if (is_cmd_buitin(argv[0]))
+	{
+		data->last_exit_status = execute_builtin(argv, data, start);
+		return (1);
+	}
+	return (0);
+}
 
-    
-    if (tmp && tmp->next == NULL && (ft_strcmp(tmp->str, "./minishell") == 0 || ft_strcmp(tmp->str, "minishell") == 0))
-        signal_setup2();
-    cmd_start = curr;
-    while (curr)
-    {
-        if (curr->type == PIPE || curr->next == NULL)
-        {
-            if (curr->type == PIPE && pipe(p_fds) == -1)
-            {
-                perror("pipe failed");
-                return (1);
-            }
-            if (is_single_builtin_cmd(data->token, curr) && curr->type != PIPE)
-            {
-                
-                data->last_exit_status = execute_builtin(&cmd_start->str, data, cmd_start);
-                return (data->last_exit_status);
-            }
-            pid = fork();
-            g_sig = 555;
-            if (pid == 0)
-            {
-                if (p_read_end_fd != -1)
-                {
-                    dup2(p_read_end_fd, STDIN_FILENO);
-                    close(p_read_end_fd);
-                }
-                if (curr->type == PIPE)
-                {
-                    close(p_fds[0]);
-                    dup2(p_fds[1], STDOUT_FILENO);
-                    close(p_fds[1]);
-                }
-                execute_cmd(data, cmd_start, curr);                  
-                h = data->last_exit_status;
-                close_all_fds(&data->fd_tracker);
-                gc_malloc(0, 0);
-                exit(h);
-            }
-            
-            else if (pid < 0)
-                perror("fork failed");
-            else if (pid > 0)
-                last_pid = pid;
-            if (p_read_end_fd != -1)
-                close(p_read_end_fd);
-            if (curr->type == PIPE)
-            {
-                close(p_fds[1]);
-                p_read_end_fd = p_fds[0];
-            }
-            cmd_start = curr->next;
-        }
-        curr = curr->next;
-    }
-    while ((waited_pid = waitpid(-1, &status, 0)) > 0)
-    {
-        if (waited_pid == last_pid)
-        {
-            if (WIFEXITED(status))
-                data->last_exit_status = WEXITSTATUS(status);
-            else if (WIFSIGNALED(status))
-            {
-                data->last_exit_status = 128 + WTERMSIG(status);
-                if (WTERMSIG(status) == SIGQUIT)
-                    write(1, "Quit\n", 5);
-            }
-        }
-    }
-    close_all_fds(&data->fd_tracker);
-    return (data->last_exit_status);
+void	execute_cmd(t_data *data, t_toke *start, t_toke *end)
+{
+	char	**argv;
+	char	*cmd_path;
+	pid_t	pid;
+
+	cmd_path = NULL;
+	signal_setup_child();
+	if (get_the_redirections(start) < 0)
+		exit(1);
+	argv = build_argv(start, end, data);
+	if (check_argv_and_builtin(argv, data, start) == 1)
+		return ;
+	cmd_path = help_execute_cmd(data, cmd_path, argv);
+	if (!cmd_path)
+		return ;
+	pid = fork();
+	g_sig = 5656;
+	if (pid == 0)
+		last_execution(data, cmd_path, argv);
+	else if (pid > 0)
+		wait_all_child2(data, pid);
+	else
+		(perror("fork failed"), data->last_exit_status = 1);
+}
+
+pid_t	help_execute_cmds(t_data *data, t_toke *curr, t_toke *cmd_start,
+		int *p_read_end_fd)
+{
+	int		p_fds[2];
+	pid_t	arr[2];
+
+	handle_pipe_creation(curr, p_fds);
+	arr[0] = fork();
+	g_sig = 555;
+	if (arr[0] == 0)
+	{
+		pipe_duping(p_read_end_fd, curr, p_fds);
+		call_execute_cmd(data, cmd_start, curr);
+	}
+	pipe_check(p_read_end_fd, arr, curr, p_fds);
+	return (arr[1]);
+}
+
+int	execute_cmds(t_data *data)
+{
+	t_toke	*curr;
+	t_toke	*cmd_start;
+	pid_t	last_pid;
+	int		p_read_end_fd;
+
+	curr = data->token;
+	check_minishell_special_case(data);
+	cmd_start = curr;
+	p_read_end_fd = -1;
+	while (curr)
+	{
+		if (curr->type == PIPE || curr->next == NULL)
+		{
+			if (handle_builtin_no_pipe(data, cmd_start, curr))
+				return (data->last_exit_status);
+			last_pid = help_execute_cmds(data, curr, cmd_start, &p_read_end_fd);
+			cmd_start = curr->next;
+		}
+		curr = curr->next;
+	}
+	wait_all_child(data, last_pid);
+	close_all_fds(&data->fd_tracker);
+	return (data->last_exit_status);
 }

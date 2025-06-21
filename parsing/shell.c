@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/19 17:51:17 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/21 22:58:25 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static t_data	*init_data(char **envp)
 	t_data	*data;
 
 	if (!isatty(0) || !isatty(1))
-		return (printf("test the project in the r\n"), NULL);
+		return (printf("please test the project in the right way\n"), NULL);
 	data = gc_malloc(sizeof(t_data), 1);
 	data->copy_env = copy_env(envp, data);
 	signal_setup();
@@ -50,6 +50,8 @@ static int	read_and_prepare(t_data *data, char **line,
 	if ((*line)[0])
 		add_history(*line);
 	*list = lexer(*line);
+	if (!(*line)[0])
+		return (0);
 	if (!(*list))
 		data->last_exit_status = 2;
 	expandd(*list, data->copy_env, data->last_exit_status);

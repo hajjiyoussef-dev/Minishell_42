@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_wildcards.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrami <hrami@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 01:28:56 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/19 15:45:42 by hrami            ###   ########.fr       */
+/*   Updated: 2025/06/21 23:21:59 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,19 @@ char	**expand_wildcards(char *str, int *count)
 	dir = opendir(".");
 	if (!dir)
 		return (NULL);
-	while ((entry = readdir(dir)) != NULL)
+	entry = readdir(dir);
+	while (entry != NULL)
 	{
-		if (entry->d_name[0] == '.' && str[0] != '.')
-			continue ;
-		if (match_string(entry->d_name, str))
+		if (!(entry->d_name[0] == '.' && str[0] != '.'))
 		{
-			matching = gc_realloc(matching, size, size + 2);
-			matching[size++] = ft_strdup(entry->d_name);
-			matching[size] = NULL;
+			if (match_string(entry->d_name, str))
+			{
+				matching = gc_realloc(matching, size, size + 2);
+				matching[size++] = ft_strdup(entry->d_name);
+				matching[size] = NULL;
+			}
 		}
+		entry = readdir(dir);
 	}
 	closedir(dir);
 	*count = size;

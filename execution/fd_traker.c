@@ -12,10 +12,9 @@
 
 #include "../parsing/mini_shell.h"
 
-
-void add_fd(t_fd_track **head, int fd)
+void	add_fd(t_fd_track **head, int fd)
 {
-	t_fd_track *new;
+	t_fd_track	*new;
 
 	new = gc_malloc((sizeof(t_fd_track)), 1);
 	new->fd = fd;
@@ -23,10 +22,9 @@ void add_fd(t_fd_track **head, int fd)
 	*head = new;
 }
 
-
-void close_all_fds(t_fd_track **head)
+void	close_all_fds(t_fd_track **head)
 {
-	t_fd_track *tmp;
+	t_fd_track	*tmp;
 
 	while (*head)
 	{
