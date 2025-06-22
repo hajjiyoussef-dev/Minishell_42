@@ -8,7 +8,7 @@ SRC = parsing/lexer.c parsing/shell.c parsing/tools_fun_0.c parsing/syntax.c par
 		 execution/builtins/update_export.c  execution/builtins/print_export.c  execution/fd_traker.c  execution/build_argv.c \
 		 execution/env_list_to_array.c   execution/handel_builting_exe.c   execution/handle_redirections.c \
 		 execution/find_path.c  parsing/handle_wildcards.c parsing/help_hndl_wild.c  execution/builtins/help_cd.c  execution/builtins/help_exit.c \
-		 execution/help_execution_part1.c   execution/help_execution_part2.c  execution/help_execution_part3.c  
+		 execution/help_execution_part1.c   execution/help_execution_part2.c  execution/help_execution_part3.c  parsing/help_hndl_wild2.c
 
 INC = mini_shell.h
 OBJS = ${SRC:.c=.o}

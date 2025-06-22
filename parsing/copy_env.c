@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/14 00:06:27 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 23:40:10 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 11:00:08 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,24 @@ static t_copy	*add_default_env_vars(t_data *data)
 {
 	char	*pwd;
 	char	*tmp;
+	int		flag;
 
 	tmp = ft_strdup("/usr/local/sbin:/usr/local/bin:");
 	tmp = ft_strjoin(tmp, ft_strdup("/usr/sbin:/usr/bin:/sbin:/bin"));
 	pwd = getcwd(NULL, 0);
+	flag = 0;
+	if (!pwd)
+	{
+		flag = 1;
+		pwd = ft_strdup("");
+	}
 	add_back(&data->copy_env, new_node(ft_strdup("PWD="), ft_strdup(pwd)));
 	add_back(&data->copy_env, new_node(ft_strdup("SHLVL="), ft_strdup("1")));
 	add_back(&data->copy_env, new_node(ft_strdup("_="),
 			ft_strdup("/usr/bin/env")));
 	add_back(&data->copy_env, new_node(ft_strdup("PATH="), tmp));
-	free(pwd);
+	if (!flag)
+		free(pwd);
 	data->is_env_i = true;
 	return (data->copy_env);
 }

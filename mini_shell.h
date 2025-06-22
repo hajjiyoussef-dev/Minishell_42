@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:13:14 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/21 23:01:46 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 17:36:20 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,8 @@ void					handle_wildcards(t_toke **list);
 int						match_string(const char *file_name,
 							const char *str);
 char					**expand_wildcards(char *str, int *count);
+char					**help_expand(char **matching, int *size,
+							char *file_name);
 void					sort_string_array(char **arr, int size);
 char					*expand_line(char *line, t_data *data);
 int						handle_heredoc(t_toke *toke, t_data *data);

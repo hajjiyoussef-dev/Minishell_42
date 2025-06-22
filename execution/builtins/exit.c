@@ -6,18 +6,19 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 01:47:13 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 23:42:52 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 13:49:35 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../mini_shell.h"
 
-static void	exit_with_error(char *arg, int code)
+static void	exit_with_error(char *arg, int code, t_data *data)
 {
 	ft_putendl_fd("exit", 2);
 	ft_putstr_fd("bash: exit: ", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putendl_fd(": numeric argument required", 2);
+	close_all_fds(&data->fd_tracker);
 	gc_malloc(0, 0);
 	exit(code);
 }
@@ -75,14 +76,13 @@ static void	handle_standalone_exit(t_toke *curr, t_data *data)
 	if (!curr)
 	{
 		ft_putstr_fd("exit\n", 1);
-		gc_malloc(0, 0);
-		exit(0);
+		(close_all_fds(&data->fd_tracker), gc_malloc(0, 0), exit(0));
 	}
 	if (curr->next)
 	{
 		ft_atoi(curr->str, &overflow);
 		if (overflow)
-			exit_with_error(curr->str, 2);
+			exit_with_error(curr->str, 2, data);
 		ft_putendl_fd("exit", 2);
 		ft_putstr_fd("bash: exit: too many arguments\n", 2);
 		data->last_exit_status = 1;
@@ -90,10 +90,10 @@ static void	handle_standalone_exit(t_toke *curr, t_data *data)
 	}
 	exit_code = ft_atoi(curr->str, &overflow);
 	if (overflow)
-		exit_with_error(curr->str, 2);
+		exit_with_error(curr->str, 2, data);
 	ft_putstr_fd("exit\n", 1);
 	data->last_exit_status = exit_code % 256;
-	(gc_malloc(0, 0), exit(exit_code % 256));
+	(close_all_fds(&data->fd_tracker), gc_malloc(0, 0), exit(exit_code % 256));
 }
 
 int	handle_exit(t_toke *tokns, t_toke *start, t_data *data)

@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 22:09:17 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 23:40:27 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 19:28:24 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void	wait_all_child2(t_data *data, pid_t pid)
 {
 	int	status;
 
+	close_all_fds(&data->fd_tracker);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 	{

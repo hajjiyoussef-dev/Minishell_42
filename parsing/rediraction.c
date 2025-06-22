@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:55:19 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/21 23:39:21 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 16:34:19 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ static void	handle_append(t_toke *tmp, int *flag, t_data *data)
 			*flag = 0;
 			printf("minishell : %s Permission denied\n", tmp->next->str);
 		}
+		else
+			add_fd(&data->fd_tracker, tmp->fd);
 	}
-	else
-		add_fd(&data->fd_tracker, tmp->fd);
 }
 
 int	handle_file(t_data *data)

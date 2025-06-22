@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 01:28:56 by yhajji            #+#    #+#             */
-/*   Updated: 2025/06/21 23:38:49 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 18:19:05 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,7 @@ char	**expand_wildcards(char *str, int *count)
 		if (!(entry->d_name[0] == '.' && str[0] != '.'))
 		{
 			if (match_string(entry->d_name, str))
-			{
-				matching = gc_realloc(matching, size, size + 2);
-				matching[size++] = ft_strdup(entry->d_name);
-				matching[size] = NULL;
-			}
+				matching = help_expand(matching, &size, entry->d_name);
 		}
 		entry = readdir(dir);
 	}

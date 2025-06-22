@@ -6,7 +6,7 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/21 23:38:36 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/22 17:14:11 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static int	process_tokens(t_data *data, t_toke *list, int org_in, char *line)
 		data->token = list;
 		if (check_her_doc(list))
 			exit((printf("minishell: maximum here-document count exceeded\n"),
+					close_all_fds(&data->fd_tracker), gc_malloc(0, 0),
 					free(line), 2));
 		if (handle_file(data) == -1337)
 			return (free(line), dup2(org_in, 0), close(org_in), 1);
@@ -46,7 +47,7 @@ static int	read_and_prepare(t_data *data, char **line,
 	if (g_sig == 42)
 		data->last_exit_status = 130;
 	if (!*line)
-		return (printf("exit\n"), dup2(org_in, 0), close(org_in), -1);
+		return (printf("exit\n"), dup2(org_in, 0), -1);
 	if ((*line)[0])
 		add_history(*line);
 	*list = lexer(*line);
@@ -98,6 +99,7 @@ int	main(int ac, char **av, char **envp)
 		return (0);
 	minishell_loop(data);
 	exit_status = data->last_exit_status;
+	close_all_fds(&data->fd_tracker);
 	gc_malloc(0, 0);
 	return (exit_status);
 }
