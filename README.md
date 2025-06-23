@@ -2,6 +2,13 @@
 
 Minishell is a simplified shell developed as part of the 42 Network curriculum. It replicates essential behaviors of a Unix shell (like `bash`), handling parsing, command execution, pipes, redirections, built-in commands, signal management, and more.
 
+### Terminal Output Example
+
+Here's a demo of how the shell responds to commands and handles edge cases:
+
+![Terminal Demo](terminal.png)
+
+
 ## 🧠 Project Summary
 
 Over the span of a month, this project required building a shell from scratch in C, mastering process control, terminal behavior, memory management, and more. We recreated core shell functionalities while adhering to strict standards for memory leaks, signal handling, and correct Bash-like behavior.
