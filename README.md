@@ -86,12 +86,11 @@ lexer.c parser.c utils.c
 ```
 minishell/
 │   ├── parsing/
-│   ├── execution/
-│   ├── builtins/
-│   └── utils/
+│   └── execution/
+│         ├── builtins/
+│         └── signal/
 ├── includes/
-├── Makefile
-└── minishell.c
+└── Makefile
 ```
 
 ---
