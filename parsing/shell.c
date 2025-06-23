@@ -6,11 +6,76 @@
 /*   By: yhajji <yhajji@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 16:16:51 by hrami             #+#    #+#             */
-/*   Updated: 2025/06/22 17:14:11 by yhajji           ###   ########.fr       */
+/*   Updated: 2025/06/23 15:30:13 by yhajji           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../mini_shell.h"
+
+char	*ft_strrchr(const char *s, int c)
+{
+	const char		*last_one;
+	unsigned char	c1;
+
+	last_one = NULL;
+	c1 = (unsigned char)c;
+	while (*s != '\0')
+	{
+		if (*s == c1)
+		{
+			last_one = s;
+		}
+		s++;
+	}
+	if (c1 == '\0')
+		return ((char *)s);
+	return ((char *)last_one);
+}
+
+char *minishell_name(t_data *data)
+{
+	char *cmd;
+	char *name;
+	char *new_cmd;
+	char *result;
+	char *result_2;
+	char *result_3;
+	char *colored;
+
+	cmd = getcwd(NULL, 0);
+	if (!cmd)
+	{
+		cmd = get_the_pathe(data->copy_env, "PWD");
+		if (!cmd)
+			cmd = get_the_pathe(data->copy_env, "secret_pwd=");
+		else 
+			return (NULL);
+	}
+	name = ft_str_join(cmd, "$ ");
+	if (!name)
+		return (NULL);
+	new_cmd = ft_strrchr(name, '/');
+	if (!new_cmd)
+		result = ft_strdup(name);  
+	else
+		result = ft_strdup(new_cmd + 1); 
+	if (!result)
+		return (NULL);
+	colored = ft_strjoin("\033[1;34m", result);    
+	result = ft_strjoin(colored, "\033[0m"); 
+	if (data->last_exit_status == 0)
+	{
+		colored = ft_strjoin("\033[1;32m" , "->");
+		result_2 = ft_strjoin(colored, "\033[0m ");
+	}    
+	else
+	{
+		colored = ft_strjoin("\033[31m" , "->");
+		result_2 = ft_strjoin(colored, "\033[0m ");
+	}
+	result_3 = ft_strjoin(result_2, result);
+	return (result_3);
+}
 
 static t_data	*init_data(char **envp)
 {
@@ -43,7 +108,11 @@ static int	process_tokens(t_data *data, t_toke *list, int org_in, char *line)
 static int	read_and_prepare(t_data *data, char **line,
 	t_toke **list, int org_in)
 {
-	*line = readline("minishell> ");
+	char *name;
+	
+	name = minishell_name(data);
+	// name = ft_str_join(name);
+	*line = readline(name);
 	if (g_sig == 42)
 		data->last_exit_status = 130;
 	if (!*line)
@@ -70,6 +139,7 @@ static void	minishell_loop(t_data *data)
 	char	*line;
 	int		org_in;
 
+	printf("\033[2J\033[H");
 	while (1)
 	{
 		signal_setup();
